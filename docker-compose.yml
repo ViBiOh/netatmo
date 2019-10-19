@@ -4,15 +4,17 @@ services:
   api:
     image: "${DOCKER_USER}/netatmo"
     labels:
-      traefik.http.routers.goweb-http.rule: Host(`${DOMAIN}`)
-      traefik.http.routers.goweb-http.entrypoints: http
-      traefik.http.routers.goweb-http.middlewares: redirect@file
-      traefik.http.routers.goweb-https.rule: Host(`${DOMAIN}`)
-      traefik.http.routers.goweb-https.entrypoints: https
-      traefik.http.routers.goweb-https.middlewares: compress@file, web-limit@file
-      traefik.http.routers.goweb-https.tls: true
-      traefik.http.routers.goweb-https.tls.certresolver: default
-      traefik.http.services.goweb-service.loadbalancer.server.port: "1080"
+      traefik.http.routers.netatmo-http.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.netatmo-http.entrypoints: http
+      traefik.http.routers.netatmo-http.middlewares: redirect@file
+      traefik.http.routers.netatmo-https.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.netatmo-https.entrypoints: https
+      traefik.http.routers.netatmo-https.middlewares: compress@file, web-limit@file, netatmo-auth
+      traefik.http.routers.netatmo-https.tls: true
+      traefik.http.routers.netatmo-https.tls.certresolver: default
+      traefik.http.services.netatmo-service.loadbalancer.server.port: "1080"
+      traefik.http.middlewares.netatmo-auth.basicauth.removeheader: "true"
+      traefik.http.middlewares.netatmo-auth.basicauth.users: "${BASIC_USERS}"
     environment:
       NETATMO_CSP: "default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' unpkg.com/swagger-ui-dist@3/; style-src 'self' 'unsafe-inline' unpkg.com/swagger-ui-dist@3/; img-src 'self' data:"
       NETATMO_ACCESS_TOKEN: "${API_NETATMO_ACCESS_TOKEN}"
@@ -23,6 +25,6 @@ services:
     restart: on-failure:5
     read_only: true
     cpu_shares: 128
-    mem_limit: 25165824
+    mem_limit: 67108864
     security_opt:
     - no-new-privileges

@@ -11,11 +11,11 @@ Following variables are required for CI:
 
 | Name | Purpose |
 |:--:|:--:|
-| **GITHUB_OAUTH_TOKEN** | for creating release from  Github API |
 | **DOMAIN** | for setting Traefik domain for app |
 | **DEPLOY_CREDENTIALS** | for deploying app to server |
 | **DOCKER_USER** | for publishing Docker image |
 | **DOCKER_PASS** | for publishing Docker image |
+| **CODECOV_TOKEN** | for publishing coverage to codecov |
 
 ## Usage
 
