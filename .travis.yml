@@ -1,0 +1,65 @@
+jobs:
+  include:
+  - stage: Build
+
+    sudo: required
+    services:
+    - docker
+    script: docker build --build-arg CODECOV_TOKEN  --build-arg "APP_VERSION=$(make version)" -t "${DOCKER_USER}/$(make name):$(make version)" .
+    after_success:
+    - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+    - docker push "${DOCKER_USER}/$(make name):$(make version)"
+
+  - stage: Release
+
+    language: go
+    go: 1.13
+    env:
+      - GO111MODULE=on
+      - GITHUB_REPOSITORY=ViBiOh/netatmo
+      - GIT_TAG=${TRAVIS_TAG}
+      - RELEASE_NAME=${TRAVIS_TAG}
+    script: ./script/release
+
+  - stage: Publish
+
+    sudo: required
+    services:
+    - docker
+    script:
+    - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+    - docker pull "${DOCKER_USER}/$(make name):$(make version)"
+    - docker tag "${DOCKER_USER}/$(make name):$(make version)" "${DOCKER_USER}/$(make name):latest"
+    - docker push "${DOCKER_USER}/$(make name):latest"
+    after_success:
+    - curl -q -sS -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/netatmo
+
+  - stage: Deploy
+
+    script: |
+     sed \
+        -e "s|\${DOCKER_USER}|${DOCKER_USER}|g" \
+        -e "s|\${DOMAIN}|${DOMAIN}|g" \
+        -e "s|\${NETATMO_ACCESS_TOKEN}|${NETATMO_ACCESS_TOKEN}|g" \
+        -e "s|\${NETATMO_CLIENT_ID}|${NETATMO_CLIENT_ID}|g" \
+        -e "s|\${NETATMO_CLIENT_SECRET}|${NETATMO_CLIENT_SECRET}|g" \
+        -e "s|\${NETATMO_REFRESH_TOKEN}|${NETATMO_REFRESH_TOKEN}|g" \
+        -e "s|\${NETATMO_SCOPES}|${NETATMO_SCOPES}|g" \
+        -e "s|\\\$|\$\$|g" \
+        docker-compose.yml > docker-compose-env.yml
+    deploy:
+      provider: script
+      skip_cleanup: true
+      script: bash script/deploy "$(make name)" "@docker-compose-env.yml"
+
+stages:
+  - Build
+  - name: Release
+    if: tag =~ /^v\d+\.\d+\.\d+$/
+  - name: Publish
+    if: branch = master && type = push
+  - name: Deploy
+    if: branch = master && type = push
+
+notifications:
+  email: false

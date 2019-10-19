@@ -1,0 +1,7 @@
+.env
+
+# Golang
+bin/
+release/
+output.txt
+coverage.*
