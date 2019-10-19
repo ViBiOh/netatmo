@@ -17,11 +17,11 @@ services:
       traefik.http.middlewares.netatmo-auth.basicauth.users: "${BASIC_USERS}"
     environment:
       NETATMO_CSP: "default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' unpkg.com/swagger-ui-dist@3/; style-src 'self' 'unsafe-inline' unpkg.com/swagger-ui-dist@3/; img-src 'self' data:"
-      NETATMO_ACCESS_TOKEN: "${API_NETATMO_ACCESS_TOKEN}"
-      NETATMO_CLIENT_ID: "${API_NETATMO_CLIENT_ID}"
-      NETATMO_CLIENT_SECRET: "${API_NETATMO_CLIENT_SECRET}"
-      NETATMO_REFRESH_TOKEN: "${API_NETATMO_REFRESH_TOKEN}"
-      NETATMO_SCOPES: "${API_NETATMO_SCOPES}"
+      NETATMO_ACCESS_TOKEN: "${NETATMO_ACCESS_TOKEN}"
+      NETATMO_CLIENT_ID: "${NETATMO_CLIENT_ID}"
+      NETATMO_CLIENT_SECRET: "${NETATMO_CLIENT_SECRET}"
+      NETATMO_REFRESH_TOKEN: "${NETATMO_REFRESH_TOKEN}"
+      NETATMO_SCOPES: "${NETATMO_SCOPES}"
     restart: on-failure:5
     read_only: true
     cpu_shares: 128
