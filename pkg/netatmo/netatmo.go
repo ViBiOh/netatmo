@@ -76,7 +76,7 @@ func (a *app) Handler() http.Handler {
 		a.mutex.RLock()
 		defer a.mutex.RUnlock()
 
-		if err := httpjson.ResponseJSON(w, http.StatusOK, a.devices, httpjson.IsPretty(r)); err != nil {
+		if err := httpjson.ResponseArrayJSON(w, http.StatusOK, a.devices, httpjson.IsPretty(r)); err != nil {
 			httperror.InternalServerError(w, err)
 		}
 	})

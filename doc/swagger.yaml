@@ -36,3 +36,66 @@ paths:
             text/plain:
               schema:
                 type: string
+
+  /devices:
+    get:
+      description: Netatmo devices
+      responses:
+        '200':
+          description: Devices data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    $ref: '#/components/schemas/Devices'
+
+components:
+  schemas:
+    DashboardData:
+      type: object
+      properties:
+        temperature:
+          type: number
+          format: float
+          description: Temperature in celcius
+        humidity:
+          type: number
+          format: float
+          description: Humidity in percentage
+        noise:
+          type: number
+          format: float
+          description: Noise in dB
+        co2:
+          type: number
+          format: float
+          description: CO2 in ppm
+
+    Device:
+      type: object
+      properties:
+        station_name:
+          type: string
+          description: Station name
+        dashboard_data:
+          description: Station data
+          $ref: '#/components/schemas/DashboardData'
+        modules:
+          type: array
+          description: Additional modules
+          items:
+            type: object
+            properties:
+              module_name:
+                type: string
+                description: Module name
+              dashboard_data:
+                description: Station data
+                $ref: '#/components/schemas/DashboardData'
+
+    Devices:
+      type: array
+      items:
+        $ref: '#/components/schemas/Device'

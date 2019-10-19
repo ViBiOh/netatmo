@@ -27,10 +27,10 @@ type Device struct {
 
 // DashboardData contains dashboard data
 type DashboardData struct {
-	Temperature float32
-	Humidity    float32
-	Noise       float32
-	CO2         float32
+	Temperature float32 `json:"temperature"`
+	Humidity    float32 `json:"humidity"`
+	Noise       float32 `json:"noise"`
+	CO2         float32 `json:"co2"`
 }
 
 // Error describes error
