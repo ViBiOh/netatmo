@@ -2,12 +2,12 @@ version: "2"
 
 services:
   api:
-    image: "${DOCKER_USER}/netatmo"
+    image: "vibioh/netatmo"
     labels:
-      traefik.http.routers.netatmo-http.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.netatmo-http.rule: Host(`netatmo.vibioh.fr`)
       traefik.http.routers.netatmo-http.entrypoints: http
       traefik.http.routers.netatmo-http.middlewares: redirect@file
-      traefik.http.routers.netatmo-https.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.netatmo-https.rule: Host(`netatmo.vibioh.fr`)
       traefik.http.routers.netatmo-https.entrypoints: https
       traefik.http.routers.netatmo-https.middlewares: compress@file, web-limit@file, netatmo-auth
       traefik.http.routers.netatmo-https.tls: true
@@ -22,6 +22,34 @@ services:
       NETATMO_CLIENT_SECRET: "${NETATMO_CLIENT_SECRET}"
       NETATMO_REFRESH_TOKEN: "${NETATMO_REFRESH_TOKEN}"
       NETATMO_SCOPES: "${NETATMO_SCOPES}"
+    restart: on-failure:5
+    read_only: true
+    cpu_shares: 128
+    mem_limit: 67108864
+    security_opt:
+    - no-new-privileges
+
+  work:
+    image: "vibioh/netatmo"
+    labels:
+      traefik.http.routers.netatmo-http.rule: Host(`workcoach.vibioh.fr`)
+      traefik.http.routers.netatmo-http.entrypoints: http
+      traefik.http.routers.netatmo-http.middlewares: redirect@file
+      traefik.http.routers.netatmo-https.rule: Host(`workcoach.vibioh.fr`)
+      traefik.http.routers.netatmo-https.entrypoints: https
+      traefik.http.routers.netatmo-https.middlewares: compress@file, web-limit@file, netatmo-work-auth
+      traefik.http.routers.netatmo-https.tls: true
+      traefik.http.routers.netatmo-https.tls.certresolver: default
+      traefik.http.services.netatmo-service.loadbalancer.server.port: "1080"
+      traefik.http.middlewares.netatmo-work-auth.basicauth.removeheader: "true"
+      traefik.http.middlewares.netatmo-work-auth.basicauth.users: "${BASIC_WORK_USERS}"
+    environment:
+      NETATMO_CSP: "default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' unpkg.com/swagger-ui-dist@3/; style-src 'self' 'unsafe-inline' unpkg.com/swagger-ui-dist@3/; img-src 'self' data:"
+      NETATMO_ACCESS_TOKEN: "${NETATMO_ACCESS_TOKEN}"
+      NETATMO_CLIENT_ID: "${NETATMO_CLIENT_ID}"
+      NETATMO_CLIENT_SECRET: "${NETATMO_CLIENT_SECRET}"
+      NETATMO_REFRESH_TOKEN: "${NETATMO_REFRESH_TOKEN}"
+      NETATMO_SCOPES: "read_homecoach"
     restart: on-failure:5
     read_only: true
     cpu_shares: 128

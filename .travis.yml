@@ -27,14 +27,13 @@ jobs:
 
     script: |
      sed \
-        -e "s|\${DOCKER_USER}|${DOCKER_USER}|g" \
-        -e "s|\${DOMAIN}|${DOMAIN}|g" \
         -e "s|\${NETATMO_ACCESS_TOKEN}|${NETATMO_ACCESS_TOKEN}|g" \
         -e "s|\${NETATMO_CLIENT_ID}|${NETATMO_CLIENT_ID}|g" \
         -e "s|\${NETATMO_CLIENT_SECRET}|${NETATMO_CLIENT_SECRET}|g" \
         -e "s|\${NETATMO_REFRESH_TOKEN}|${NETATMO_REFRESH_TOKEN}|g" \
         -e "s|\${NETATMO_SCOPES}|${NETATMO_SCOPES}|g" \
         -e "s|\${BASIC_USERS}|${BASIC_USERS}|g" \
+        -e "s|\${BASIC_WORK_USERS}|${BASIC_WORK_USERS}|g" \
         -e "s|\\\$|\$\$|g" \
         docker-compose.yml > docker-compose-env.yml
     deploy:
