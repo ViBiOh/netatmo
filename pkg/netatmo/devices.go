@@ -59,7 +59,7 @@ func (a *app) getData(ctx context.Context, url string) (*StationsData, error) {
 			return nil, err
 		}
 
-		body, status, _, err = request.Get(ctx, fmt.Sprintf("%s%s", url, a.accessToken), nil)
+		body, _, _, err = request.Get(ctx, fmt.Sprintf("%s%s", url, a.accessToken), nil)
 	}
 
 	rawData, err := request.ReadBody(body)
