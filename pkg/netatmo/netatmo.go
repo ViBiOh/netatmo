@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ViBiOh/httputils/v2/pkg/httperror"
-	"github.com/ViBiOh/httputils/v2/pkg/httpjson"
-	"github.com/ViBiOh/httputils/v2/pkg/logger"
-	"github.com/ViBiOh/httputils/v2/pkg/tools"
+	"github.com/ViBiOh/httputils/v3/pkg/flags"
+	"github.com/ViBiOh/httputils/v3/pkg/httperror"
+	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
+	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -46,11 +46,11 @@ type app struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		accessToken:  tools.NewFlag(prefix, "netatmo").Name("AccessToken").Default("").Label("Access Token").ToString(fs),
-		refreshToken: tools.NewFlag(prefix, "netatmo").Name("RefreshToken").Default("").Label("Refresh Token").ToString(fs),
-		clientID:     tools.NewFlag(prefix, "netatmo").Name("ClientID").Default("").Label("Client ID").ToString(fs),
-		clientSecret: tools.NewFlag(prefix, "netatmo").Name("ClientSecret").Default("").Label("Client Secret").ToString(fs),
-		scopes:       tools.NewFlag(prefix, "netatmo").Name("Scopes").Default("").Label("Scopes, comma separated").ToString(fs),
+		accessToken:  flags.New(prefix, "netatmo").Name("AccessToken").Default("").Label("Access Token").ToString(fs),
+		refreshToken: flags.New(prefix, "netatmo").Name("RefreshToken").Default("").Label("Refresh Token").ToString(fs),
+		clientID:     flags.New(prefix, "netatmo").Name("ClientID").Default("").Label("Client ID").ToString(fs),
+		clientSecret: flags.New(prefix, "netatmo").Name("ClientSecret").Default("").Label("Client Secret").ToString(fs),
+		scopes:       flags.New(prefix, "netatmo").Name("Scopes").Default("").Label("Scopes, comma separated").ToString(fs),
 	}
 }
 

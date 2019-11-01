@@ -7,9 +7,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/ViBiOh/httputils/v2/pkg/errors"
-	"github.com/ViBiOh/httputils/v2/pkg/logger"
-	"github.com/ViBiOh/httputils/v2/pkg/request"
+	"github.com/ViBiOh/httputils/v3/pkg/logger"
+	"github.com/ViBiOh/httputils/v3/pkg/request"
 )
 
 const (
@@ -28,19 +27,19 @@ func (a *app) refreshAccessToken(ctx context.Context) error {
 		"client_secret": []string{a.clientSecret},
 	}
 
-	body, _, _, err := request.PostForm(ctx, netatmoRefreshTokenURL, payload, nil)
+	body, _, _, err := request.Post(ctx, netatmoRefreshTokenURL, payload, nil)
 	if err != nil {
 		return err
 	}
 
-	rawData, err := request.ReadBody(body)
+	rawData, err := request.ReadContent(body)
 	if err != nil {
 		return err
 	}
 
 	var token Token
 	if err := json.Unmarshal(rawData, &token); err != nil {
-		return errors.WithStack(err)
+		return err
 	}
 
 	a.accessToken = token.AccessToken
@@ -62,14 +61,14 @@ func (a *app) getData(ctx context.Context, url string) (*StationsData, error) {
 		body, _, _, err = request.Get(ctx, fmt.Sprintf("%s%s", url, a.accessToken), nil)
 	}
 
-	rawData, err := request.ReadBody(body)
+	rawData, err := request.ReadContent(body)
 	if err != nil {
 		return nil, err
 	}
 
 	var infos StationsData
 	if err := json.Unmarshal(rawData, &infos); err != nil {
-		return nil, errors.WithStack(err)
+		return nil, err
 	}
 
 	return &infos, nil
