@@ -27,7 +27,7 @@ func (a *app) refreshAccessToken(ctx context.Context) error {
 		"client_secret": []string{a.clientSecret},
 	}
 
-	resp, err := request.Post(ctx, netatmoRefreshTokenURL, payload, nil)
+	resp, err := request.New().Post(netatmoRefreshTokenURL).Form(ctx, payload)
 	if err != nil {
 		return err
 	}
@@ -52,13 +52,13 @@ func (a *app) getData(ctx context.Context, url string) (*StationsData, error) {
 		return nil, fmt.Errorf("app not enabled")
 	}
 
-	resp, err := request.Get(ctx, fmt.Sprintf("%s%s", url, a.accessToken), nil)
+	resp, err := request.New().Get(fmt.Sprintf("%s%s", url, a.accessToken)).Send(ctx, nil)
 	if err != nil && resp != nil && resp.StatusCode == http.StatusForbidden {
 		if err := a.refreshAccessToken(ctx); err != nil {
 			return nil, err
 		}
 
-		resp, err = request.Get(ctx, fmt.Sprintf("%s%s", url, a.accessToken), nil)
+		resp, err = request.New().Get(fmt.Sprintf("%s%s", url, a.accessToken)).Send(ctx, nil)
 	}
 
 	rawData, err := request.ReadBodyResponse(resp)
