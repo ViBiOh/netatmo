@@ -61,6 +61,10 @@ func (a *app) getData(ctx context.Context, url string) (*StationsData, error) {
 		resp, err = request.New().Get(fmt.Sprintf("%s%s", url, a.accessToken)).Send(ctx, nil)
 	}
 
+	if err != nil {
+		return nil, err
+	}
+
 	rawData, err := request.ReadBodyResponse(resp)
 	if err != nil {
 		return nil, err

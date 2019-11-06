@@ -94,7 +94,7 @@ func (a *app) Start() {
 		<-timer.C
 		devices, err := a.GetDevices(context.Background())
 		if err != nil {
-			logger.Error("unable to fetch devices: %+v", err)
+			logger.Error("unable to fetch devices: %s", err)
 		} else {
 			a.mutex.Lock()
 			a.devices = devices
