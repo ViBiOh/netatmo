@@ -1,5 +1,7 @@
-.env
+# scripts
 scripts/
+
+.env
 
 # Golang
 bin/
