@@ -66,7 +66,7 @@ style:
 ## test: Test with coverage
 .PHONY: test
 test:
-	script/coverage
+	scripts/coverage
 	go test $(PACKAGES) -bench . -benchmem -run Benchmark.*
 
 ## build: Build binary
