@@ -22,7 +22,7 @@ jobs:
     - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
     - scripts/docker_promote "${DOCKER_USER}/$(make name)" "$(make version)"
     after_success:
-    - curl -sSqL --max-time 10 -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/netatmo
+    - curl -q -sSL --max-time 10 -X POST https://goreportcard.com/checks?repo=github.com/ViBiOh/netatmo
 
   - stage: Deploy
 
@@ -39,7 +39,7 @@ jobs:
         -e "s|\\\$|\$\$|g" \
         docker-compose.yml > docker-compose-env.yml
       curl -q -sSL "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy"
-      script/deploy "$(make name)" "@docker-compose-env.yml"
+      scripts/deploy "$(make name)" "@docker-compose-env.yml"
 
 stages:
   - Build
