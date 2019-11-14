@@ -27,9 +27,8 @@ jobs:
   - stage: Deploy
 
     language: minimal
-    script:
-    - curl -q -sSL "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy"
-    - sed \
+    script: |
+      sed \
         -e "s|\${NETATMO_ACCESS_TOKEN}|${NETATMO_ACCESS_TOKEN}|g" \
         -e "s|\${NETATMO_CLIENT_ID}|${NETATMO_CLIENT_ID}|g" \
         -e "s|\${NETATMO_CLIENT_SECRET}|${NETATMO_CLIENT_SECRET}|g" \
@@ -39,7 +38,8 @@ jobs:
         -e "s|\${BASIC_WORK_USERS}|${BASIC_WORK_USERS}|g" \
         -e "s|\\\$|\$\$|g" \
         docker-compose.yml > docker-compose-env.yml
-    - script/deploy "$(make name)" "@docker-compose-env.yml"
+      curl -q -sSL "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy"
+      script/deploy "$(make name)" "@docker-compose-env.yml"
 
 stages:
   - Build
