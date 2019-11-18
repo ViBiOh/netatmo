@@ -15,7 +15,10 @@ func (a *app) getMetrics(prefix, suffix string) prometheus.Gauge {
 		})
 
 		a.prometheusCollectors[fmt.Sprintf("%s_%s", prefix, suffix)] = gauge
-		prometheus.MustRegister(gauge)
+
+		if a.registerer != nil {
+			a.registerer.MustRegister(gauge)
+		}
 	}
 
 	return gauge

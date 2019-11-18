@@ -36,7 +36,8 @@ func main() {
 
 	alcotest.DoAndExit(alcotestConfig)
 
-	netatmoApp := netatmo.New(netatmoConfig)
+	prometheusApp := prometheus.New(prometheusConfig)
+	netatmoApp := netatmo.New(netatmoConfig, prometheusApp)
 	netatmoHandler := http.StripPrefix(devicesPath, netatmoApp.Handler())
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -52,7 +53,7 @@ func main() {
 	go netatmoApp.Start()
 
 	server := httputils.New(serverConfig)
-	server.Middleware(prometheus.New(prometheusConfig))
+	server.Middleware(prometheusApp)
 	server.Middleware(owasp.New(owaspConfig))
 	server.Middleware(cors.New(corsConfig))
 	server.ListenServeWait(handler)

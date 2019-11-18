@@ -27,19 +27,10 @@ jobs:
   - stage: Deploy
 
     language: minimal
-    script: |
-      sed \
-        -e "s|\${NETATMO_ACCESS_TOKEN}|${NETATMO_ACCESS_TOKEN}|g" \
-        -e "s|\${NETATMO_CLIENT_ID}|${NETATMO_CLIENT_ID}|g" \
-        -e "s|\${NETATMO_CLIENT_SECRET}|${NETATMO_CLIENT_SECRET}|g" \
-        -e "s|\${NETATMO_REFRESH_TOKEN}|${NETATMO_REFRESH_TOKEN}|g" \
-        -e "s|\${NETATMO_SCOPES}|${NETATMO_SCOPES}|g" \
-        -e "s|\${BASIC_USERS}|${BASIC_USERS}|g" \
-        -e "s|\${BASIC_WORK_USERS}|${BASIC_WORK_USERS}|g" \
-        -e "s|\\\$|\$\$|g" \
-        docker-compose.yml > docker-compose-env.yml
-      curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy"
-      scripts/deploy "$(make name)" "@docker-compose-env.yml"
+    script:
+    - curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy" "env_replace"
+    - scripts/env_replace docker-compose.yml NETATMO_ACCESS_TOKEN NETATMO_CLIENT_ID NETATMO_CLIENT_SECRET NETATMO_REFRESH_TOKEN NETATMO_SCOPES BASIC_USERS BASIC_WORK_USERS | sed "s|\\\$|\$\$|g" > docker-compose-env.yml
+    - scripts/deploy "$(make name)" "@docker-compose-env.yml"
 
 stages:
   - Build

@@ -12,6 +12,7 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/httperror"
 	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
+	httpprom "github.com/ViBiOh/httputils/v3/pkg/prometheus"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -41,6 +42,8 @@ type app struct {
 	mutex                sync.RWMutex
 	devices              []Device
 	prometheusCollectors map[string]prometheus.Gauge
+
+	registerer prometheus.Registerer
 }
 
 // Flags adds flags for configuring package
@@ -55,7 +58,12 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config) App {
+func New(config Config, prometheusApp httpprom.App) App {
+	var registerer prometheus.Registerer
+	if prometheusApp != nil {
+		registerer = prometheusApp.Registerer()
+	}
+
 	return &app{
 		clientID:             strings.TrimSpace(*config.clientID),
 		clientSecret:         strings.TrimSpace(*config.clientSecret),
@@ -63,6 +71,7 @@ func New(config Config) App {
 		refreshToken:         strings.TrimSpace(*config.refreshToken),
 		scopes:               strings.TrimSpace(*config.scopes),
 		prometheusCollectors: make(map[string]prometheus.Gauge),
+		registerer:           registerer,
 	}
 }
 
