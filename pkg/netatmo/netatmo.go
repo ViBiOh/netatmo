@@ -3,13 +3,14 @@ package netatmo
 import (
 	"context"
 	"flag"
+	"fmt"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/ViBiOh/httputils/v3/pkg/cron"
 	"github.com/ViBiOh/httputils/v3/pkg/flags"
-	"github.com/ViBiOh/httputils/v3/pkg/httperror"
 	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	httpprom "github.com/ViBiOh/httputils/v3/pkg/prometheus"
@@ -85,9 +86,7 @@ func (a *app) Handler() http.Handler {
 		a.mutex.RLock()
 		defer a.mutex.RUnlock()
 
-		if err := httpjson.ResponseArrayJSON(w, http.StatusOK, a.devices, httpjson.IsPretty(r)); err != nil {
-			httperror.InternalServerError(w, err)
-		}
+		httpjson.ResponseArrayJSON(w, http.StatusOK, a.devices, httpjson.IsPretty(r))
 	})
 }
 
@@ -98,22 +97,22 @@ func (a *app) Start() {
 		return
 	}
 
-	timer := time.NewTimer(time.Minute)
-	for {
-		<-timer.C
+	cron.New().Each(time.Minute*5).Start(func(_ time.Time) error {
 		devices, err := a.GetDevices(context.Background())
 		if err != nil {
-			logger.Error("unable to fetch devices: %s", err)
-		} else {
-			a.mutex.Lock()
-			a.devices = devices
-			a.mutex.Unlock()
-
-			a.updatePrometheus()
+			return fmt.Errorf("unable to fetch devices: %s", err)
 		}
 
-		timer.Reset(time.Minute)
-	}
+		a.mutex.Lock()
+		defer a.mutex.Unlock()
+
+		a.devices = devices
+		a.updatePrometheus()
+
+		return nil
+	}, func(err error) {
+		logger.Error("%s", err)
+	})
 }
 
 // Enabled check if app is enabled
