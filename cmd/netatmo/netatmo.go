@@ -53,8 +53,8 @@ func main() {
 	go netatmoApp.Start()
 
 	server := httputils.New(serverConfig)
-	server.Middleware(prometheusApp)
-	server.Middleware(owasp.New(owaspConfig))
-	server.Middleware(cors.New(corsConfig))
+	server.Middleware(prometheusApp.Middleware)
+	server.Middleware(owasp.New(owaspConfig).Middleware)
+	server.Middleware(cors.New(corsConfig).Middleware)
 	server.ListenServeWait(handler)
 }
