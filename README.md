@@ -30,7 +30,9 @@ Usage of netatmo:
         [api] Certificate file {NETATMO_API_CERT}
   -apiKey string
         [api] Key file {NETATMO_API_KEY}
-  -apiPort int
+  -apiOkStatus int
+        [api] Healthy HTTP Status code {NETATMO_API_OK_STATUS} (default 204)
+  -apiPort uint
         [api] Listen port {NETATMO_API_PORT} (default 1080)
   -clientID string
         [netatmo] Client ID {NETATMO_CLIENT_ID}

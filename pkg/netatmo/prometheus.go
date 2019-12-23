@@ -25,9 +25,6 @@ func (a *app) getMetrics(prefix, suffix string) prometheus.Gauge {
 }
 
 func (a *app) updatePrometheus() {
-	a.mutex.RLock()
-	defer a.mutex.RUnlock()
-
 	for _, device := range a.devices {
 		a.getMetrics(strings.ToLower(device.StationName), "temperature").Set(float64(device.DashboardData.Temperature))
 		a.getMetrics(strings.ToLower(device.StationName), "humidity").Set(float64(device.DashboardData.Humidity))

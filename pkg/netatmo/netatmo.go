@@ -97,7 +97,7 @@ func (a *app) Start() {
 		return
 	}
 
-	cron.New().Each(time.Minute*5).Start(func(_ time.Time) error {
+	cron.New().Each(time.Minute*5).Now().Start(func(_ time.Time) error {
 		devices, err := a.GetDevices(context.Background())
 		if err != nil {
 			return fmt.Errorf("unable to fetch devices: %s", err)
