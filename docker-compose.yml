@@ -4,7 +4,7 @@ version: "2"
 
 services:
   work:
-    image: vibioh/netatmo
+    image: ${DOCKER_USER}/netatmo
     labels:
       traefik.http.routers.netatmo-work-http.rule: Host(`workcoach.vibioh.fr`)
       traefik.http.routers.netatmo-work-http.entrypoints: http
