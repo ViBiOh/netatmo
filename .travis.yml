@@ -26,7 +26,7 @@ jobs:
       language: minimal
       script:
         - curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy" "env_replace"
-        - DOMAIN=netatmo.vibioh.fr scripts/env_replace docker-compose.yml DOCKER_USER DOMAIN NETATMO_ACCESS_TOKEN NETATMO_CLIENT_ID NETATMO_CLIENT_SECRET NETATMO_REFRESH_TOKEN NETATMO_SCOPES BASIC_USERS | sed "s|\\\$|\$\$|g" > docker-compose-env.yml
+        - SUFFIX=home DOMAIN=netatmo.vibioh.fr scripts/env_replace docker-compose.yml DOCKER_USER DOMAIN SUFFIX NETATMO_ACCESS_TOKEN NETATMO_CLIENT_ID NETATMO_CLIENT_SECRET NETATMO_REFRESH_TOKEN NETATMO_SCOPES BASIC_USERS | sed "s|\\\$|\$\$|g" > docker-compose-env.yml
         - scripts/deploy "$(make name)" "@docker-compose-env.yml"
 
     - stage: Deploy
@@ -34,7 +34,7 @@ jobs:
       language: minimal
       script:
         - curl -q -sSL --max-time 10 "https://raw.githubusercontent.com/ViBiOh/scripts/master/bootstrap" | bash -s "deploy" "env_replace"
-        - DOMAIN=workcoach.vibioh.fr NETATMO_SCOPES=read_homecoach scripts/env_replace docker-compose.yml DOCKER_USER DOMAIN NETATMO_ACCESS_TOKEN NETATMO_CLIENT_ID NETATMO_CLIENT_SECRET NETATMO_REFRESH_TOKEN NETATMO_SCOPES BASIC_USERS=BASIC_WORK_USERS | sed "s|\\\$|\$\$|g" > docker-compose-env.yml
+        - SUFFIX=work DOMAIN=workcoach.vibioh.fr NETATMO_SCOPES=read_homecoach scripts/env_replace docker-compose.yml DOCKER_USER DOMAIN SUFFIX NETATMO_ACCESS_TOKEN NETATMO_CLIENT_ID NETATMO_CLIENT_SECRET NETATMO_REFRESH_TOKEN NETATMO_SCOPES BASIC_USERS=BASIC_WORK_USERS | sed "s|\\\$|\$\$|g" > docker-compose-env.yml
         - scripts/deploy "$(make name)_work" "@docker-compose-env.yml"
 
 stages:
