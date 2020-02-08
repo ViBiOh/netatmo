@@ -12,7 +12,7 @@ services:
       traefik.http.routers.netatmo-work-https.rule: Host(`workcoach.vibioh.fr`)
       traefik.http.routers.netatmo-work-https.entrypoints: https
       traefik.http.routers.netatmo-work-https.middlewares: compress@file, web-limit@file, netatmo-work-auth
-      traefik.http.routers.netatmo-work-https.tls: true
+      traefik.http.routers.netatmo-work-https.tls: "true"
       traefik.http.routers.netatmo-work-https.tls.certresolver: default
       traefik.http.services.netatmo-work-service.loadbalancer.server.port: "1080"
       traefik.http.middlewares.netatmo-work-auth.basicauth.removeheader: "true"
