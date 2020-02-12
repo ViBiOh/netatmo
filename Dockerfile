@@ -22,4 +22,4 @@ ARG ARCH
 
 COPY --from=fetcher /app/cacert.pem /etc/ssl/certs/ca-certificates.crt
 COPY --from=fetcher /app/zoneinfo.zip /
-COPY netatmo_${OS}_${ARCH} /netatmo
+COPY release/netatmo_${OS}_${ARCH} /netatmo
