@@ -6,17 +6,17 @@ services:
   api:
     image: ${DOCKER_USER}/netatmo
     labels:
-      traefik.http.routers.netatmo-${SUFFIX}-http.rule: Host(`${DOMAIN}`)
-      traefik.http.routers.netatmo-${SUFFIX}-http.entrypoints: http
-      traefik.http.routers.netatmo-${SUFFIX}-http.middlewares: redirect@file
-      traefik.http.routers.netatmo-${SUFFIX}-https.rule: Host(`${DOMAIN}`)
-      traefik.http.routers.netatmo-${SUFFIX}-https.entrypoints: https
-      traefik.http.routers.netatmo-${SUFFIX}-https.middlewares: compress@file, web-limit@file, netatmo-${SUFFIX}-auth
-      traefik.http.routers.netatmo-${SUFFIX}-https.tls: "true"
-      traefik.http.routers.netatmo-${SUFFIX}-https.tls.certresolver: default
-      traefik.http.services.netatmo-${SUFFIX}-service.loadbalancer.server.port: "1080"
-      traefik.http.middlewares.netatmo-${SUFFIX}-auth.basicauth.removeheader: "true"
-      traefik.http.middlewares.netatmo-${SUFFIX}-auth.basicauth.users: "${BASIC_USERS}"
+      traefik.http.routers.netatmo-http.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.netatmo-http.entrypoints: http
+      traefik.http.routers.netatmo-http.middlewares: redirect@file
+      traefik.http.routers.netatmo-https.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.netatmo-https.entrypoints: https
+      traefik.http.routers.netatmo-https.middlewares: compress@file, web-limit@file, netatmo-auth
+      traefik.http.routers.netatmo-https.tls: "true"
+      traefik.http.routers.netatmo-https.tls.certresolver: default
+      traefik.http.services.netatmo-service.loadbalancer.server.port: "1080"
+      traefik.http.middlewares.netatmo-auth.basicauth.removeheader: "true"
+      traefik.http.middlewares.netatmo-auth.basicauth.users: "${BASIC_USERS}"
     environment:
       NETATMO_CSP: "default-src 'self'; base-uri 'self'; script-src 'self' 'unsafe-inline' unpkg.com/swagger-ui-dist@3/; style-src 'self' 'unsafe-inline' unpkg.com/swagger-ui-dist@3/; img-src 'self' data:"
       NETATMO_ACCESS_TOKEN: "${NETATMO_ACCESS_TOKEN}"
