@@ -8,3 +8,7 @@ bin/
 release/
 output.txt
 coverage.*
+
+# Files
+cacert.pem
+zoneinfo.zip
