@@ -26,6 +26,8 @@ Usage of netatmo:
         [api] Listen address {NETATMO_API_ADDRESS}
   -apiCert string
         [api] Certificate file {NETATMO_API_CERT}
+  -apiGraceDuration string
+        [api] Grace duration when SIGTERM received {NETATMO_API_GRACE_DURATION} (default "15s")
   -apiKey string
         [api] Key file {NETATMO_API_KEY}
   -apiOkStatus int
@@ -58,6 +60,10 @@ Usage of netatmo:
         [netatmo] Refresh Token {NETATMO_REFRESH_TOKEN}
   -scopes string
         [netatmo] Scopes, comma separated {NETATMO_SCOPES}
+  -swaggerTitle string
+        [swagger] API Title {NETATMO_SWAGGER_TITLE} (default "API")
+  -swaggerVersion string
+        [swagger] API Version {NETATMO_SWAGGER_VERSION} (default "1.0.0")
   -url string
         [alcotest] URL to check {NETATMO_URL}
   -userAgent string
