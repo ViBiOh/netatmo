@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netatmo
+spec:
+  selector:
+    matchLabels:
+      name: netatmo
+  template:
+    metadata:
+      labels:
+        name: netatmo
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/scheme: http
+        prometheus.io/port: "1080"
+    spec:
+      containers:
+        - name: netatmo
+          image: vibioh/netatmo
+          envFrom:
+            - secretRef:
+                name: netatmo
+          ports:
+            - name: http
+              containerPort: 1080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          resources:
+            requests:
+              memory: 24M
+            limits:
+              memory: 64M
