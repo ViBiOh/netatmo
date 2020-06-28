@@ -3,6 +3,6 @@ module github.com/ViBiOh/goweb
 go 1.14
 
 require (
-	github.com/ViBiOh/httputils/v3 v3.20.0
-	github.com/prometheus/client_golang v1.7.0
+	github.com/ViBiOh/httputils/v3 v3.21.0
+	github.com/prometheus/client_golang v1.7.1
 )
