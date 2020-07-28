@@ -9,10 +9,10 @@
 
 Following variables are required for CI:
 
-| Name | Purpose |
-|:--:|:--:|
-| **DOCKER_USER** | for publishing Docker image |
-| **DOCKER_PASS** | for publishing Docker image |
+|       Name        |              Purpose               |
+| :---------------: | :--------------------------------: |
+|  **DOCKER_USER**  |    for publishing Docker image     |
+|  **DOCKER_PASS**  |    for publishing Docker image     |
 | **CODECOV_TOKEN** | for publishing coverage to codecov |
 
 ## Usage
