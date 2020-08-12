@@ -1,0 +1,10 @@
+---
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: netatmo
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      name: netatmo
