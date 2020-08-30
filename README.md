@@ -53,6 +53,16 @@ Usage of netatmo:
         [owasp] X-Frame-Options {NETATMO_FRAME_OPTIONS} (default "deny")
   -hsts
         [owasp] Indicate Strict Transport Security {NETATMO_HSTS} (default true)
+  -loggerJson
+        [logger] Log format as JSON {NETATMO_LOGGER_JSON}
+  -loggerLevel string
+        [logger] Logger level {NETATMO_LOGGER_LEVEL} (default "INFO")
+  -loggerLevelKey string
+        [logger] Key for level in JSON {NETATMO_LOGGER_LEVEL_KEY} (default "level")
+  -loggerMessageKey string
+        [logger] Key for message in JSON {NETATMO_LOGGER_MESSAGE_KEY} (default "message")
+  -loggerTimeKey string
+        [logger] Key for timestam in JSON {NETATMO_LOGGER_TIME_KEY} (default "time")
   -prometheusPath string
         [prometheus] Path for exposing metrics {NETATMO_PROMETHEUS_PATH} (default "/metrics")
   -refreshToken string
