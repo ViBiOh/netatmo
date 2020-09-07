@@ -23,6 +23,9 @@ spec:
       containers:
         - name: netatmo
           image: vibioh/netatmo
+          env:
+            - name: NETATMO_LOGGER_JSON
+              value: "true"
           envFrom:
             - secretRef:
                 name: netatmo
