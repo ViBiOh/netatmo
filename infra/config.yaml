@@ -1,0 +1,11 @@
+---
+nameOverride: netatmo
+
+image:
+  repository: vibioh/netatmo
+
+config:
+  NETATMO_LOGGER_JSON: "true"
+
+ingress:
+  enabled: false
