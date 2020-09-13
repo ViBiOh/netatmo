@@ -8,6 +8,3 @@ config:
   NETATMO_LOGGER_JSON: "true"
 
 secretRef: netatmo
-
-ingress:
-  enabled: false
