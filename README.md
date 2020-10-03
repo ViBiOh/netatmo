@@ -26,7 +26,7 @@ Usage of netatmo:
   -apiCert string
         [api] Certificate file {NETATMO_API_CERT}
   -apiGraceDuration string
-        [api] Grace duration when SIGTERM received {NETATMO_API_GRACE_DURATION} (default "15s")
+        [api] Grace duration when SIGTERM received {NETATMO_API_GRACE_DURATION} (default "30s")
   -apiKey string
         [api] Key file {NETATMO_API_KEY}
   -apiOkStatus int
