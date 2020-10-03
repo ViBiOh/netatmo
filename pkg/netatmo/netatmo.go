@@ -14,14 +14,12 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	httpprom "github.com/ViBiOh/httputils/v3/pkg/prometheus"
-	"github.com/ViBiOh/httputils/v3/pkg/swagger"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
 // App of package
 type App interface {
 	Handler() http.Handler
-	Swagger() (swagger.Configuration, error)
 	Start()
 	Enabled() bool
 }
@@ -90,70 +88,6 @@ func (a *app) Handler() http.Handler {
 
 		httpjson.ResponseArrayJSON(w, http.StatusOK, a.devices, httpjson.IsPretty(r))
 	})
-}
-
-func (a *app) Swagger() (swagger.Configuration, error) {
-	return swagger.Configuration{
-		Paths: `/devices:
-  get:
-    description: Netatmo devices
-    responses:
-      '200':
-        description: Devices data
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                results:
-                  $ref: '#/components/schemas/Devices'`,
-		Components: `DashboardData:
-  type: object
-  properties:
-    temperature:
-      type: number
-      format: float
-      description: Temperature in celcius
-    humidity:
-      type: number
-      format: float
-      description: Humidity in percentage
-    noise:
-      type: number
-      format: float
-      description: Noise in dB
-    co2:
-      type: number
-      format: float
-      description: CO2 in ppm
-
-Device:
-  type: object
-  properties:
-    station_name:
-      type: string
-      description: Station name
-    dashboard_data:
-      description: Station data
-      $ref: '#/components/schemas/DashboardData'
-    modules:
-      type: array
-      description: Additional modules
-      items:
-        type: object
-        properties:
-          module_name:
-            type: string
-            description: Module name
-          dashboard_data:
-            description: Station data
-            $ref: '#/components/schemas/DashboardData'
-
-Devices:
-  type: array
-  items:
-    $ref: '#/components/schemas/Device'`,
-	}, nil
 }
 
 // Start periodic fetch of data from netatmo API

@@ -13,7 +13,6 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
 	"github.com/ViBiOh/httputils/v3/pkg/owasp"
 	"github.com/ViBiOh/httputils/v3/pkg/prometheus"
-	"github.com/ViBiOh/httputils/v3/pkg/swagger"
 )
 
 const (
@@ -29,7 +28,6 @@ func main() {
 	prometheusConfig := prometheus.Flags(fs, "prometheus")
 	owaspConfig := owasp.Flags(fs, "")
 	corsConfig := cors.Flags(fs, "cors")
-	swaggerConfig := swagger.Flags(fs, "swagger")
 
 	netatmoConfig := netatmo.Flags(fs, "")
 
@@ -37,16 +35,13 @@ func main() {
 
 	alcotest.DoAndExit(alcotestConfig)
 	logger.Global(logger.New(loggerConfig))
+	defer logger.Close()
 
 	server := httputils.New(serverConfig)
 	prometheusApp := prometheus.New(prometheusConfig)
 	netatmoApp := netatmo.New(netatmoConfig, prometheusApp)
 
-	swaggerApp, err := swagger.New(swaggerConfig, server.Swagger, prometheusApp.Swagger, netatmoApp.Swagger)
-	logger.Fatal(err)
-
 	netatmoHandler := http.StripPrefix(devicesPath, netatmoApp.Handler())
-	swaggerHandler := swaggerApp.Handler()
 
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, devicesPath) {
@@ -54,7 +49,7 @@ func main() {
 			return
 		}
 
-		swaggerHandler.ServeHTTP(w, r)
+		w.WriteHeader(http.StatusNotFound)
 	})
 
 	go netatmoApp.Start()
