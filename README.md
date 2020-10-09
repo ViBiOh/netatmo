@@ -27,12 +27,20 @@ Usage of netatmo:
         [api] Certificate file {NETATMO_API_CERT}
   -apiGraceDuration string
         [api] Grace duration when SIGTERM received {NETATMO_API_GRACE_DURATION} (default "30s")
+  -apiIdleTimeout string
+        [api] Idle Timeout {NETATMO_API_IDLE_TIMEOUT} (default "2m")
   -apiKey string
         [api] Key file {NETATMO_API_KEY}
   -apiOkStatus int
         [api] Healthy HTTP Status code {NETATMO_API_OK_STATUS} (default 204)
   -apiPort uint
         [api] Listen port {NETATMO_API_PORT} (default 1080)
+  -apiReadTimeout string
+        [api] Read Timeout {NETATMO_API_READ_TIMEOUT} (default "5s")
+  -apiShutdownTimeout string
+        [api] Shutdown Timeout {NETATMO_API_SHUTDOWN_TIMEOUT} (default "10s")
+  -apiWriteTimeout string
+        [api] Write Timeout {NETATMO_API_WRITE_TIMEOUT} (default "10s")
   -clientID string
         [netatmo] Client ID {NETATMO_CLIENT_ID}
   -clientSecret string
