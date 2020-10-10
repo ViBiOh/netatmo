@@ -11,7 +11,6 @@ import (
 	"github.com/ViBiOh/httputils/v3/pkg/cors"
 	"github.com/ViBiOh/httputils/v3/pkg/httputils"
 	"github.com/ViBiOh/httputils/v3/pkg/logger"
-	"github.com/ViBiOh/httputils/v3/pkg/model"
 	"github.com/ViBiOh/httputils/v3/pkg/owasp"
 	"github.com/ViBiOh/httputils/v3/pkg/prometheus"
 )
@@ -54,9 +53,5 @@ func main() {
 
 	go netatmoApp.Start()
 
-	httputils.New(serverConfig).ListenAndServe(handler, []model.Middleware{
-		prometheusApp.Middleware,
-		owasp.New(owaspConfig).Middleware,
-		cors.New(corsConfig).Middleware,
-	})
+	httputils.New(serverConfig).ListenAndServe(handler, nil, prometheusApp.Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware)
 }
