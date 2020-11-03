@@ -1,6 +1,6 @@
 # netatmo
 
-[![Build Status](https://travis-ci.com/ViBiOh/goweb.svg?branch=master)](https://travis-ci.com/ViBiOh/goweb)
+[![Build](https://github.com/ViBiOh/netatmo/workflows/Build/badge.svg)](https://github.com/ViBiOh/netatmo/actions)
 [![codecov](https://codecov.io/gh/ViBiOh/goweb/branch/master/graph/badge.svg)](https://codecov.io/gh/ViBiOh/goweb)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ViBiOh/goweb)](https://goreportcard.com/report/github.com/ViBiOh/goweb)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ViBiOh_netatmo&metric=alert_status)](https://sonarcloud.io/dashboard?id=ViBiOh_netatmo)
