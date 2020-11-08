@@ -71,6 +71,8 @@ Usage of netatmo:
         [logger] Key for message in JSON {NETATMO_LOGGER_MESSAGE_KEY} (default "message")
   -loggerTimeKey string
         [logger] Key for timestamp in JSON {NETATMO_LOGGER_TIME_KEY} (default "time")
+  -prometheusIgnore string
+        [prometheus] Ignored path prefixes for metrics, comma separated {NETATMO_PROMETHEUS_IGNORE}
   -prometheusPath string
         [prometheus] Path for exposing metrics {NETATMO_PROMETHEUS_PATH} (default "/metrics")
   -refreshToken string
