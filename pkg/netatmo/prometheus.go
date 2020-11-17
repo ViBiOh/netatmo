@@ -2,16 +2,30 @@ package netatmo
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+var (
+	sanitizeRegexp = regexp.MustCompile(`(?mi)(\S+).*`)
+)
+
+func sanitizeSource(source string) string {
+	matches := sanitizeRegexp.FindAllStringSubmatch(source, -1)
+	if len(matches) == 0 {
+		return source
+	}
+
+	return matches[0][1]
+}
+
 func (a *app) getMetrics(prefix, suffix string) prometheus.Gauge {
 	gauge, ok := a.prometheusCollectors[fmt.Sprintf("%s_%s", prefix, suffix)]
 	if !ok {
 		gauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: fmt.Sprintf("%s_%s_%s", strings.ToLower(Source), prefix, suffix),
+			Name: fmt.Sprintf("%s_%s_%s", sanitizeSource(strings.ToLower(Source)), prefix, suffix),
 		})
 
 		a.prometheusCollectors[fmt.Sprintf("%s_%s", prefix, suffix)] = gauge
