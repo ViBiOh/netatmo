@@ -12,20 +12,22 @@ var (
 	sanitizeRegexp = regexp.MustCompile(`(?mi)(\S+).*`)
 )
 
-func sanitizeSource(source string) string {
-	matches := sanitizeRegexp.FindAllStringSubmatch(source, -1)
+func sanitizeName(name string) string {
+	matches := sanitizeRegexp.FindAllStringSubmatch(name, -1)
 	if len(matches) == 0 {
-		return source
+		return name
 	}
 
 	return matches[0][1]
 }
 
 func (a *app) getMetrics(prefix, suffix string) prometheus.Gauge {
+	prefix = sanitizeName(prefix)
+
 	gauge, ok := a.prometheusCollectors[fmt.Sprintf("%s_%s", prefix, suffix)]
 	if !ok {
 		gauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: fmt.Sprintf("%s_%s_%s", sanitizeSource(strings.ToLower(Source)), prefix, suffix),
+			Name: fmt.Sprintf("%s_%s_%s", strings.ToLower(Source), sanitizeName(prefix), suffix),
 		})
 
 		a.prometheusCollectors[fmt.Sprintf("%s_%s", prefix, suffix)] = gauge

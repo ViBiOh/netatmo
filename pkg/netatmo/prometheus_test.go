@@ -2,9 +2,9 @@ package netatmo
 
 import "testing"
 
-func TestSanitizeSource(t *testing.T) {
+func TestSanitizeName(t *testing.T) {
 	type args struct {
-		source string
+		name string
 	}
 
 	var cases = []struct {
@@ -13,16 +13,23 @@ func TestSanitizeSource(t *testing.T) {
 		want      string
 	}{
 		{
+			"empty",
+			args{
+				name: "",
+			},
+			"",
+		},
+		{
 			"simple",
 			args{
-				source: "maison",
+				name: "maison",
 			},
 			"maison",
 		},
 		{
 			"detailed",
 			args{
-				source: "maison (indoor)",
+				name: "maison (indoor)",
 			},
 			"maison",
 		},
@@ -30,7 +37,7 @@ func TestSanitizeSource(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.intention, func(t *testing.T) {
-			if got := sanitizeSource(tc.args.source); got != tc.want {
+			if got := sanitizeName(tc.args.name); got != tc.want {
 				t.Errorf("sanitizeSource() = %s, want %s", got, tc.want)
 			}
 		})
