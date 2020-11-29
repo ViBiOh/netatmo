@@ -18,6 +18,7 @@ type StationsData struct {
 // Device contains a device data
 type Device struct {
 	StationName   string        `json:"station_name"`
+	ModuleName    string        `json:"module_name"`
 	DashboardData DashboardData `json:"dashboard_data"`
 	Modules       []struct {
 		ModuleName    string        `json:"module_name"`

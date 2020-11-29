@@ -21,16 +21,21 @@ func sanitizeName(name string) string {
 	return matches[0][1]
 }
 
-func (a *app) getMetrics(prefix, suffix string) prometheus.Gauge {
-	prefix = sanitizeName(prefix)
+func (a *app) getMetrics(device, module, suffix string) prometheus.Gauge {
+	var name string
+	if len(module) == 0 {
+		name = strings.ToLower(fmt.Sprintf("%s_%s", device, suffix))
+	} else {
+		name = strings.ToLower(fmt.Sprintf("%s_%s_%s", device, module, suffix))
+	}
 
-	gauge, ok := a.prometheusCollectors[fmt.Sprintf("%s_%s", prefix, suffix)]
+	gauge, ok := a.prometheusCollectors[name]
 	if !ok {
 		gauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: fmt.Sprintf("%s_%s_%s", strings.ToLower(Source), sanitizeName(prefix), suffix),
+			Name: fmt.Sprintf("%s_%s", Source, name),
 		})
 
-		a.prometheusCollectors[fmt.Sprintf("%s_%s", prefix, suffix)] = gauge
+		a.prometheusCollectors[name] = gauge
 
 		if a.registerer != nil {
 			a.registerer.MustRegister(gauge)
@@ -42,14 +47,16 @@ func (a *app) getMetrics(prefix, suffix string) prometheus.Gauge {
 
 func (a *app) updatePrometheus() {
 	for _, device := range a.devices {
-		a.getMetrics(strings.ToLower(device.StationName), "temperature").Set(float64(device.DashboardData.Temperature))
-		a.getMetrics(strings.ToLower(device.StationName), "humidity").Set(float64(device.DashboardData.Humidity))
-		a.getMetrics(strings.ToLower(device.StationName), "noise").Set(float64(device.DashboardData.Noise))
-		a.getMetrics(strings.ToLower(device.StationName), "co2").Set(float64(device.DashboardData.CO2))
+		stationName := sanitizeName(device.StationName)
+
+		a.getMetrics(stationName, device.ModuleName, "temperature").Set(float64(device.DashboardData.Temperature))
+		a.getMetrics(stationName, device.ModuleName, "humidity").Set(float64(device.DashboardData.Humidity))
+		a.getMetrics(stationName, device.ModuleName, "noise").Set(float64(device.DashboardData.Noise))
+		a.getMetrics(stationName, device.ModuleName, "co2").Set(float64(device.DashboardData.CO2))
 
 		for _, module := range device.Modules {
-			a.getMetrics(strings.ToLower(fmt.Sprintf("%s_%s", device.StationName, module.ModuleName)), "temperature").Set(float64(module.DashboardData.Temperature))
-			a.getMetrics(strings.ToLower(fmt.Sprintf("%s_%s", device.StationName, module.ModuleName)), "humidity").Set(float64(module.DashboardData.Humidity))
+			a.getMetrics(stationName, module.ModuleName, "temperature").Set(float64(module.DashboardData.Temperature))
+			a.getMetrics(stationName, module.ModuleName, "humidity").Set(float64(module.DashboardData.Humidity))
 
 		}
 	}
