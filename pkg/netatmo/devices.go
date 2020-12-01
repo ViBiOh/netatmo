@@ -47,35 +47,35 @@ func (a *app) refreshAccessToken(ctx context.Context) error {
 	return nil
 }
 
-func (a *app) getData(ctx context.Context, url string) (*StationsData, error) {
+func (a *app) getData(ctx context.Context, url string) (StationsData, error) {
 	if !a.Enabled() {
-		return nil, fmt.Errorf("app not enabled")
+		return noneStationsData, fmt.Errorf("app not enabled")
 	}
 
 	resp, err := request.New().Get(fmt.Sprintf("%s%s", url, a.accessToken)).Send(ctx, nil)
 	if err != nil && resp != nil && resp.StatusCode == http.StatusForbidden {
 		if err := a.refreshAccessToken(ctx); err != nil {
-			return nil, err
+			return noneStationsData, err
 		}
 
 		resp, err = request.New().Get(fmt.Sprintf("%s%s", url, a.accessToken)).Send(ctx, nil)
 	}
 
 	if err != nil {
-		return nil, err
+		return noneStationsData, err
 	}
 
 	rawData, err := request.ReadBodyResponse(resp)
 	if err != nil {
-		return nil, err
+		return noneStationsData, err
 	}
 
 	var infos StationsData
 	if err := json.Unmarshal(rawData, &infos); err != nil {
-		return nil, err
+		return noneStationsData, err
 	}
 
-	return &infos, nil
+	return infos, nil
 }
 
 func (a *app) GetDevices(ctx context.Context) ([]Device, error) {
