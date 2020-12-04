@@ -34,17 +34,18 @@ type Config struct {
 }
 
 type app struct {
+	prometheusCollectors map[string]prometheus.Gauge
+	registerer           prometheus.Registerer
+
 	clientID     string
 	clientSecret string
 	accessToken  string
 	refreshToken string
 	scopes       string
 
-	mutex                sync.RWMutex
-	devices              []Device
-	prometheusCollectors map[string]prometheus.Gauge
+	devices []Device
 
-	registerer prometheus.Registerer
+	mutex sync.RWMutex
 }
 
 // Flags adds flags for configuring package

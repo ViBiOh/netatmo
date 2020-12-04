@@ -21,13 +21,13 @@ type StationsData struct {
 
 // Device contains a device data
 type Device struct {
-	StationName   string        `json:"station_name"`
-	ModuleName    string        `json:"module_name"`
-	DashboardData DashboardData `json:"dashboard_data"`
-	Modules       []struct {
+	StationName string `json:"station_name"`
+	ModuleName  string `json:"module_name"`
+	Modules     []struct {
 		ModuleName    string        `json:"module_name"`
 		DashboardData DashboardData `json:"dashboard_data"`
 	} `json:"modules"`
+	DashboardData DashboardData `json:"dashboard_data"`
 }
 
 // DashboardData contains dashboard data
@@ -41,8 +41,8 @@ type DashboardData struct {
 // Error describes error
 type Error struct {
 	Error struct {
-		Code    int
 		Message string
+		Code    int
 	}
 }
 
