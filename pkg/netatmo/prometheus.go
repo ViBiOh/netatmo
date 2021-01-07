@@ -32,7 +32,8 @@ func (a *app) getMetrics(device, module, suffix string) prometheus.Gauge {
 	gauge, ok := a.prometheusCollectors[name]
 	if !ok {
 		gauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: fmt.Sprintf("%s_%s", Source, name),
+			Namespace: Source,
+			Name:      name,
 		})
 
 		a.prometheusCollectors[name] = gauge
