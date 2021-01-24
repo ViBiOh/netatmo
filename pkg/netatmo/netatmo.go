@@ -20,7 +20,7 @@ import (
 // App of package
 type App interface {
 	Handler() http.Handler
-	Start()
+	Start(<-chan struct{})
 	Enabled() bool
 }
 
@@ -92,13 +92,15 @@ func (a *app) Handler() http.Handler {
 }
 
 // Start periodic fetch of data from netatmo API
-func (a *app) Start() {
+func (a *app) Start(done <-chan struct{}) {
 	if !a.Enabled() {
 		logger.Warn("app is disabled")
 		return
 	}
 
-	cron.New().Each(time.Minute*5).Now().Start(func(_ time.Time) error {
+	cron.New().Each(time.Minute*5).Now().OnError(func(err error) {
+		logger.Error("%s", err)
+	}).Start(func(_ time.Time) error {
 		devices, err := a.GetDevices(context.Background())
 		if err != nil {
 			return fmt.Errorf("unable to fetch devices: %s", err)
@@ -111,9 +113,7 @@ func (a *app) Start() {
 		a.updatePrometheus()
 
 		return nil
-	}, func(err error) {
-		logger.Error("%s", err)
-	})
+	}, done)
 }
 
 // Enabled check if app is enabled
