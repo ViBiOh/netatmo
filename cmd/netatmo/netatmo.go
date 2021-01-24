@@ -51,7 +51,8 @@ func main() {
 		w.WriteHeader(http.StatusNotFound)
 	})
 
-	go netatmoApp.Start()
+	server := httputils.New(serverConfig)
+	go netatmoApp.Start(server.GetDone())
 
-	httputils.New(serverConfig).ListenAndServe(handler, nil, prometheusApp.Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware)
+	server.ListenAndServe(handler, nil, prometheusApp.Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware)
 }
