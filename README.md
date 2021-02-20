@@ -21,26 +21,10 @@ Following variables are required for CI:
 Usage of netatmo:
   -accessToken string
         [netatmo] Access Token {NETATMO_ACCESS_TOKEN}
-  -apiAddress string
-        [api] Listen address {NETATMO_API_ADDRESS}
-  -apiCert string
-        [api] Certificate file {NETATMO_API_CERT}
-  -apiGraceDuration string
-        [api] Grace duration when SIGTERM received {NETATMO_API_GRACE_DURATION} (default "30s")
-  -apiIdleTimeout string
-        [api] Idle Timeout {NETATMO_API_IDLE_TIMEOUT} (default "2m")
-  -apiKey string
-        [api] Key file {NETATMO_API_KEY}
-  -apiOkStatus int
-        [api] Healthy HTTP Status code {NETATMO_API_OK_STATUS} (default 204)
-  -apiPort uint
-        [api] Listen port {NETATMO_API_PORT} (default 1080)
-  -apiReadTimeout string
-        [api] Read Timeout {NETATMO_API_READ_TIMEOUT} (default "5s")
-  -apiShutdownTimeout string
-        [api] Shutdown Timeout {NETATMO_API_SHUTDOWN_TIMEOUT} (default "10s")
-  -apiWriteTimeout string
-        [api] Write Timeout {NETATMO_API_WRITE_TIMEOUT} (default "10s")
+  -address string
+        [server] Listen address {NETATMO_ADDRESS}
+  -cert string
+        [server] Certificate file {NETATMO_CERT}
   -clientID string
         [netatmo] Client ID {NETATMO_CLIENT_ID}
   -clientSecret string
@@ -59,8 +43,14 @@ Usage of netatmo:
         [owasp] Content-Security-Policy {NETATMO_CSP} (default "default-src 'self'; base-uri 'self'")
   -frameOptions string
         [owasp] X-Frame-Options {NETATMO_FRAME_OPTIONS} (default "deny")
+  -graceDuration string
+        [http] Grace duration when SIGTERM received {NETATMO_GRACE_DURATION} (default "30s")
   -hsts
         [owasp] Indicate Strict Transport Security {NETATMO_HSTS} (default true)
+  -idleTimeout string
+        [server] Idle Timeout {NETATMO_IDLE_TIMEOUT} (default "2m")
+  -key string
+        [server] Key file {NETATMO_KEY}
   -loggerJson
         [logger] Log format as JSON {NETATMO_LOGGER_JSON}
   -loggerLevel string
@@ -71,16 +61,40 @@ Usage of netatmo:
         [logger] Key for message in JSON {NETATMO_LOGGER_MESSAGE_KEY} (default "message")
   -loggerTimeKey string
         [logger] Key for timestamp in JSON {NETATMO_LOGGER_TIME_KEY} (default "time")
+  -okStatus int
+        [http] Healthy HTTP Status code {NETATMO_OK_STATUS} (default 204)
+  -port uint
+        [server] Listen port {NETATMO_PORT} (default 1080)
+  -prometheusAddress string
+        [prometheus] Listen address {NETATMO_PROMETHEUS_ADDRESS}
+  -prometheusCert string
+        [prometheus] Certificate file {NETATMO_PROMETHEUS_CERT}
+  -prometheusIdleTimeout string
+        [prometheus] Idle Timeout {NETATMO_PROMETHEUS_IDLE_TIMEOUT} (default "10s")
   -prometheusIgnore string
         [prometheus] Ignored path prefixes for metrics, comma separated {NETATMO_PROMETHEUS_IGNORE}
-  -prometheusPath string
-        [prometheus] Path for exposing metrics {NETATMO_PROMETHEUS_PATH} (default "/metrics")
+  -prometheusKey string
+        [prometheus] Key file {NETATMO_PROMETHEUS_KEY}
+  -prometheusPort uint
+        [prometheus] Listen port {NETATMO_PROMETHEUS_PORT} (default 9090)
+  -prometheusReadTimeout string
+        [prometheus] Read Timeout {NETATMO_PROMETHEUS_READ_TIMEOUT} (default "5s")
+  -prometheusShutdownTimeout string
+        [prometheus] Shutdown Timeout {NETATMO_PROMETHEUS_SHUTDOWN_TIMEOUT} (default "5s")
+  -prometheusWriteTimeout string
+        [prometheus] Write Timeout {NETATMO_PROMETHEUS_WRITE_TIMEOUT} (default "10s")
+  -readTimeout string
+        [server] Read Timeout {NETATMO_READ_TIMEOUT} (default "5s")
   -refreshToken string
         [netatmo] Refresh Token {NETATMO_REFRESH_TOKEN}
   -scopes string
         [netatmo] Scopes, comma separated {NETATMO_SCOPES}
+  -shutdownTimeout string
+        [server] Shutdown Timeout {NETATMO_SHUTDOWN_TIMEOUT} (default "10s")
   -url string
         [alcotest] URL to check {NETATMO_URL}
   -userAgent string
         [alcotest] User-Agent for check {NETATMO_USER_AGENT} (default "Alcotest")
+  -writeTimeout string
+        [server] Write Timeout {NETATMO_WRITE_TIMEOUT} (default "10s")
 ```

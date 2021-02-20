@@ -9,11 +9,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ViBiOh/httputils/v3/pkg/cron"
-	"github.com/ViBiOh/httputils/v3/pkg/flags"
-	"github.com/ViBiOh/httputils/v3/pkg/httpjson"
-	"github.com/ViBiOh/httputils/v3/pkg/logger"
-	httpprom "github.com/ViBiOh/httputils/v3/pkg/prometheus"
+	"github.com/ViBiOh/httputils/v4/pkg/cron"
+	"github.com/ViBiOh/httputils/v4/pkg/flags"
+	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
+	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -60,12 +59,7 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, prometheusApp httpprom.App) App {
-	var registerer prometheus.Registerer
-	if prometheusApp != nil {
-		registerer = prometheusApp.Registerer()
-	}
-
+func New(config Config, registerer prometheus.Registerer) App {
 	return &app{
 		clientID:             strings.TrimSpace(*config.clientID),
 		clientSecret:         strings.TrimSpace(*config.clientSecret),
