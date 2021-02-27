@@ -24,7 +24,7 @@ spec:
   values:
     nameOverride: netatmo
     image:
-      repository: vibioh/netatmo:202102212025 # {"$imagepolicy": "default:netatmo"}
+      repository: vibioh/netatmo:202102212025 # {"$imagepolicy": "default:flux-netatmo-api"}
     config:
       NETATMO_LOGGER_JSON: "true"
     secrets:
