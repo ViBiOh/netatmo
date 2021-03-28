@@ -81,7 +81,7 @@ func (a *app) Handler() http.Handler {
 		a.mutex.RLock()
 		defer a.mutex.RUnlock()
 
-		httpjson.ResponseArrayJSON(w, http.StatusOK, a.devices, httpjson.IsPretty(r))
+		httpjson.WriteArray(w, http.StatusOK, a.devices, httpjson.IsPretty(r))
 	})
 }
 

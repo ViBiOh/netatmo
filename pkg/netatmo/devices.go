@@ -2,11 +2,11 @@ package netatmo
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 
+	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	"github.com/ViBiOh/httputils/v4/pkg/request"
 )
@@ -32,13 +32,8 @@ func (a *app) refreshAccessToken(ctx context.Context) error {
 		return err
 	}
 
-	rawData, err := request.ReadBodyResponse(resp)
-	if err != nil {
-		return err
-	}
-
 	var token Token
-	if err := json.Unmarshal(rawData, &token); err != nil {
+	if err := httpjson.Read(resp, &token, "refresh token"); err != nil {
 		return err
 	}
 
@@ -65,13 +60,8 @@ func (a *app) getData(ctx context.Context, url string) (StationsData, error) {
 		return noneStationsData, err
 	}
 
-	rawData, err := request.ReadBodyResponse(resp)
-	if err != nil {
-		return noneStationsData, err
-	}
-
 	var infos StationsData
-	if err := json.Unmarshal(rawData, &infos); err != nil {
+	if err := httpjson.Read(resp, &infos, "station data"); err != nil {
 		return noneStationsData, err
 	}
 
