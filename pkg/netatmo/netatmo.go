@@ -94,8 +94,8 @@ func (a *app) Start(done <-chan struct{}) {
 
 	cron.New().Each(time.Minute*5).Now().OnError(func(err error) {
 		logger.Error("%s", err)
-	}).Start(func(_ time.Time) error {
-		devices, err := a.GetDevices(context.Background())
+	}).Start(func(ctx context.Context) error {
+		devices, err := a.GetDevices(ctx)
 		if err != nil {
 			return fmt.Errorf("unable to fetch devices: %s", err)
 		}
