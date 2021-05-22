@@ -33,8 +33,8 @@ func (a *app) refreshAccessToken(ctx context.Context) error {
 	}
 
 	var token Token
-	if err := httpjson.Read(resp, &token, "refresh token"); err != nil {
-		return err
+	if err := httpjson.Read(resp, &token); err != nil {
+		return fmt.Errorf("unable to read token: %s", err)
 	}
 
 	a.accessToken = token.AccessToken
@@ -61,8 +61,8 @@ func (a *app) getData(ctx context.Context, url string) (StationsData, error) {
 	}
 
 	var infos StationsData
-	if err := httpjson.Read(resp, &infos, "station data"); err != nil {
-		return noneStationsData, err
+	if err := httpjson.Read(resp, &infos); err != nil {
+		return noneStationsData, fmt.Errorf("unable to read data: %s", err)
 	}
 
 	return infos, nil
