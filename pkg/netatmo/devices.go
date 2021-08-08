@@ -17,7 +17,7 @@ const (
 	netatmoRefreshTokenURL      = "https://api.netatmo.com/oauth2/token"
 )
 
-func (a *app) refreshAccessToken(ctx context.Context) error {
+func (a *App) refreshAccessToken(ctx context.Context) error {
 	logger.Info("Refreshing token")
 
 	payload := url.Values{
@@ -42,7 +42,7 @@ func (a *app) refreshAccessToken(ctx context.Context) error {
 	return nil
 }
 
-func (a *app) getData(ctx context.Context, url string) (StationsData, error) {
+func (a *App) getData(ctx context.Context, url string) (StationsData, error) {
 	if !a.Enabled() {
 		return noneStationsData, fmt.Errorf("app not enabled")
 	}
@@ -68,7 +68,7 @@ func (a *app) getData(ctx context.Context, url string) (StationsData, error) {
 	return infos, nil
 }
 
-func (a *app) GetDevices(ctx context.Context) ([]Device, error) {
+func (a *App) getDevices(ctx context.Context) ([]Device, error) {
 	devices := make([]Device, 0)
 
 	if a.HasScope("read_station") {

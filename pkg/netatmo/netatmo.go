@@ -17,22 +17,7 @@ import (
 )
 
 // App of package
-type App interface {
-	Handler() http.Handler
-	Start(<-chan struct{})
-	Enabled() bool
-}
-
-// Config of package
-type Config struct {
-	accessToken  *string
-	refreshToken *string
-	clientID     *string
-	clientSecret *string
-	scopes       *string
-}
-
-type app struct {
+type App struct {
 	prometheusCollectors map[string]prometheus.Gauge
 	registerer           prometheus.Registerer
 
@@ -47,6 +32,15 @@ type app struct {
 	mutex sync.RWMutex
 }
 
+// Config of package
+type Config struct {
+	accessToken  *string
+	refreshToken *string
+	clientID     *string
+	clientSecret *string
+	scopes       *string
+}
+
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
@@ -59,8 +53,8 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, registerer prometheus.Registerer) App {
-	return &app{
+func New(config Config, registerer prometheus.Registerer) *App {
+	return &App{
 		clientID:             strings.TrimSpace(*config.clientID),
 		clientSecret:         strings.TrimSpace(*config.clientSecret),
 		accessToken:          strings.TrimSpace(*config.accessToken),
@@ -72,7 +66,7 @@ func New(config Config, registerer prometheus.Registerer) App {
 }
 
 // Handler for request. Should be use with net/http
-func (a *app) Handler() http.Handler {
+func (a *App) Handler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -86,7 +80,7 @@ func (a *app) Handler() http.Handler {
 }
 
 // Start periodic fetch of data from netatmo API
-func (a *app) Start(done <-chan struct{}) {
+func (a *App) Start(done <-chan struct{}) {
 	if !a.Enabled() {
 		logger.Warn("app is disabled")
 		return
@@ -95,7 +89,7 @@ func (a *app) Start(done <-chan struct{}) {
 	cron.New().Each(time.Minute*5).Now().OnError(func(err error) {
 		logger.Error("%s", err)
 	}).Start(func(ctx context.Context) error {
-		devices, err := a.GetDevices(ctx)
+		devices, err := a.getDevices(ctx)
 		if err != nil {
 			return fmt.Errorf("unable to fetch devices: %s", err)
 		}
@@ -111,11 +105,11 @@ func (a *app) Start(done <-chan struct{}) {
 }
 
 // Enabled check if app is enabled
-func (a *app) Enabled() bool {
+func (a *App) Enabled() bool {
 	return a.accessToken != ""
 }
 
 // HasScope check if given scope is configured
-func (a *app) HasScope(scope string) bool {
+func (a *App) HasScope(scope string) bool {
 	return strings.Contains(a.scopes, scope)
 }

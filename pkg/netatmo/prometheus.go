@@ -21,7 +21,7 @@ func sanitizeName(name string) string {
 	return matches[0][1]
 }
 
-func (a *app) getMetrics(device, module, suffix string) prometheus.Gauge {
+func (a *App) getMetrics(device, module, suffix string) prometheus.Gauge {
 	var name string
 	if len(module) == 0 {
 		name = strings.ToLower(fmt.Sprintf("%s_%s", device, suffix))
@@ -46,7 +46,7 @@ func (a *app) getMetrics(device, module, suffix string) prometheus.Gauge {
 	return gauge
 }
 
-func (a *app) updatePrometheus() {
+func (a *App) updatePrometheus() {
 	for _, device := range a.devices {
 		stationName := sanitizeName(device.StationName)
 
