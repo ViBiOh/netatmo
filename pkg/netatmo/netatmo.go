@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/ViBiOh/httputils/v4/pkg/cron"
@@ -89,7 +90,7 @@ func (a *App) Start(done <-chan struct{}) {
 		return
 	}
 
-	cron.New().Each(time.Minute*5).Now().OnError(func(err error) {
+	cron.New().Each(time.Minute*5).OnSignal(syscall.SIGUSR1).Now().OnError(func(err error) {
 		logger.Error("%s", err)
 	}).Start(func(ctx context.Context) error {
 		devices, err := a.getDevices(ctx)
