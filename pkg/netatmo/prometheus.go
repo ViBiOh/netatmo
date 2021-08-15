@@ -3,7 +3,6 @@ package netatmo
 import (
 	"fmt"
 	"regexp"
-	"strings"
 
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -12,6 +11,74 @@ var (
 	sanitizeRegexp = regexp.MustCompile(`(?mi)(\S+).*`)
 )
 
+func createMetrics(prometheusRegisterer prometheus.Registerer, names ...string) (map[string]*prometheus.GaugeVec, error) {
+	if prometheusRegisterer == nil {
+		return nil, nil
+	}
+
+	metrics := make(map[string]*prometheus.GaugeVec)
+	for _, name := range names {
+		metric, err := createMetric(prometheusRegisterer, name)
+		if err != nil {
+			return nil, err
+		}
+
+		metrics[name] = metric
+	}
+
+	return metrics, nil
+}
+
+func createMetric(prometheusRegisterer prometheus.Registerer, name string) (*prometheus.GaugeVec, error) {
+	if prometheusRegisterer == nil {
+		return nil, nil
+	}
+
+	gauge := prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: Source,
+		Name:      name,
+	}, []string{"station", "module"})
+
+	if err := prometheusRegisterer.Register(gauge); err != nil {
+		return nil, fmt.Errorf("unable to registrer %s: %s", name, err)
+	}
+
+	return gauge, nil
+}
+
+func (a *App) setMetric(name, station, module string, value float64) {
+	metric, ok := a.metrics[name]
+	if !ok {
+		return
+	}
+
+	labels := prometheus.Labels{
+		"station": station,
+	}
+
+	if len(module) != 0 {
+		labels["module"] = module
+	}
+
+	metric.With(labels).Set(value)
+}
+
+func (a *App) updatePrometheus() {
+	for _, device := range a.devices {
+		stationName := sanitizeName(device.StationName)
+
+		a.setMetric("temperature", stationName, device.ModuleName, float64(device.DashboardData.Temperature))
+		a.setMetric("humidity", stationName, device.ModuleName, float64(device.DashboardData.Humidity))
+		a.setMetric("noise", stationName, device.ModuleName, float64(device.DashboardData.Noise))
+		a.setMetric("co2", stationName, device.ModuleName, float64(device.DashboardData.CO2))
+
+		for _, module := range device.Modules {
+			a.setMetric("temperature", stationName, module.ModuleName, float64(module.DashboardData.Temperature))
+			a.setMetric("humidity", stationName, module.ModuleName, float64(module.DashboardData.Humidity))
+		}
+	}
+}
+
 func sanitizeName(name string) string {
 	matches := sanitizeRegexp.FindAllStringSubmatch(name, -1)
 	if len(matches) == 0 {
@@ -19,46 +86,4 @@ func sanitizeName(name string) string {
 	}
 
 	return matches[0][1]
-}
-
-func (a *App) getMetrics(device, module, suffix string) prometheus.Gauge {
-	var name string
-	if len(module) == 0 {
-		name = strings.ToLower(fmt.Sprintf("%s_%s", device, suffix))
-	} else {
-		name = strings.ToLower(fmt.Sprintf("%s_%s_%s", device, module, suffix))
-	}
-
-	gauge, ok := a.prometheusCollectors[name]
-	if !ok {
-		gauge = prometheus.NewGauge(prometheus.GaugeOpts{
-			Namespace: Source,
-			Name:      name,
-		})
-
-		a.prometheusCollectors[name] = gauge
-
-		if a.registerer != nil {
-			a.registerer.MustRegister(gauge)
-		}
-	}
-
-	return gauge
-}
-
-func (a *App) updatePrometheus() {
-	for _, device := range a.devices {
-		stationName := sanitizeName(device.StationName)
-
-		a.getMetrics(stationName, device.ModuleName, "temperature").Set(float64(device.DashboardData.Temperature))
-		a.getMetrics(stationName, device.ModuleName, "humidity").Set(float64(device.DashboardData.Humidity))
-		a.getMetrics(stationName, device.ModuleName, "noise").Set(float64(device.DashboardData.Noise))
-		a.getMetrics(stationName, device.ModuleName, "co2").Set(float64(device.DashboardData.CO2))
-
-		for _, module := range device.Modules {
-			a.getMetrics(stationName, module.ModuleName, "temperature").Set(float64(module.DashboardData.Temperature))
-			a.getMetrics(stationName, module.ModuleName, "humidity").Set(float64(module.DashboardData.Humidity))
-
-		}
-	}
 }

@@ -49,7 +49,8 @@ func main() {
 	prometheusApp := prometheus.New(prometheusConfig)
 	healthApp := health.New(healthConfig)
 
-	netatmoApp := netatmo.New(netatmoConfig, prometheusApp.Registerer())
+	netatmoApp, err := netatmo.New(netatmoConfig, prometheusApp.Registerer())
+	logger.Fatal(err)
 
 	netatmoHandler := http.StripPrefix(devicesPath, netatmoApp.Handler())
 

@@ -18,8 +18,7 @@ import (
 
 // App of package
 type App struct {
-	prometheusCollectors map[string]prometheus.Gauge
-	registerer           prometheus.Registerer
+	metrics map[string]*prometheus.GaugeVec
 
 	clientID     string
 	clientSecret string
@@ -53,16 +52,20 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 }
 
 // New creates new App from Config
-func New(config Config, registerer prometheus.Registerer) *App {
-	return &App{
-		clientID:             strings.TrimSpace(*config.clientID),
-		clientSecret:         strings.TrimSpace(*config.clientSecret),
-		accessToken:          strings.TrimSpace(*config.accessToken),
-		refreshToken:         strings.TrimSpace(*config.refreshToken),
-		scopes:               strings.TrimSpace(*config.scopes),
-		prometheusCollectors: make(map[string]prometheus.Gauge),
-		registerer:           registerer,
+func New(config Config, prometheusRegisterer prometheus.Registerer) (*App, error) {
+	metrics, err := createMetrics(prometheusRegisterer, "temperature", "humidity", "noise", "co2")
+	if err != nil {
+		return nil, err
 	}
+
+	return &App{
+		clientID:     strings.TrimSpace(*config.clientID),
+		clientSecret: strings.TrimSpace(*config.clientSecret),
+		accessToken:  strings.TrimSpace(*config.accessToken),
+		refreshToken: strings.TrimSpace(*config.refreshToken),
+		scopes:       strings.TrimSpace(*config.scopes),
+		metrics:      metrics,
+	}, nil
 }
 
 // Handler for request. Should be use with net/http
