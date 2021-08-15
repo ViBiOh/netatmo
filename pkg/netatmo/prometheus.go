@@ -54,10 +54,7 @@ func (a *App) setMetric(name, station, module string, value float64) {
 
 	labels := prometheus.Labels{
 		"station": station,
-	}
-
-	if len(module) != 0 {
-		labels["module"] = module
+		"module":  module,
 	}
 
 	metric.With(labels).Set(value)
