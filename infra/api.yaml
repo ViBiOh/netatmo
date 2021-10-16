@@ -25,7 +25,7 @@ spec:
     nameOverride: netatmo
     image:
       name: vibioh/netatmo
-      tag: "202110090719" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
+      tag: "202110160757" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
     config:
       NETATMO_LOGGER_JSON: "true"
     secrets:
