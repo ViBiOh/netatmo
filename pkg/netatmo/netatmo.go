@@ -54,7 +54,7 @@ func Flags(fs *flag.FlagSet, prefix string) Config {
 
 // New creates new App from Config
 func New(config Config, prometheusRegisterer prometheus.Registerer) (*App, error) {
-	metrics, err := createMetrics(prometheusRegisterer, "temperature", "humidity", "noise", "co2")
+	metrics, err := createMetrics(prometheusRegisterer, "temperature", "humidity", "noise", "co2", "pressure")
 	if err != nil {
 		return nil, err
 	}
