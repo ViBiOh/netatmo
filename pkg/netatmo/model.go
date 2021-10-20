@@ -25,6 +25,7 @@ type Device struct {
 	ModuleName  string `json:"module_name"`
 	Modules     []struct {
 		ModuleName    string        `json:"module_name"`
+		BatterPercent int           `json:"battery_percent"`
 		DashboardData DashboardData `json:"dashboard_data"`
 	} `json:"modules"`
 	DashboardData DashboardData `json:"dashboard_data"`
@@ -32,10 +33,11 @@ type Device struct {
 
 // DashboardData contains dashboard data
 type DashboardData struct {
-	Temperature float32 `json:"temperature"`
-	Humidity    float32 `json:"humidity"`
-	Noise       float32 `json:"noise"`
-	CO2         float32 `json:"co2"`
+	Temperature float64 `json:"Temperature"`
+	Humidity    float64 `json:"Humidity"`
+	Noise       float64 `json:"Noise"`
+	CO2         float64 `json:"CO2"`
+	Pressure    float64 `json:"Pressure"`
 }
 
 // Error describes error

@@ -64,14 +64,15 @@ func (a *App) updatePrometheus() {
 	for _, device := range a.devices {
 		stationName := sanitizeName(device.StationName)
 
-		a.setMetric("temperature", stationName, device.ModuleName, float64(device.DashboardData.Temperature))
-		a.setMetric("humidity", stationName, device.ModuleName, float64(device.DashboardData.Humidity))
-		a.setMetric("noise", stationName, device.ModuleName, float64(device.DashboardData.Noise))
-		a.setMetric("co2", stationName, device.ModuleName, float64(device.DashboardData.CO2))
+		a.setMetric("temperature", stationName, device.ModuleName, device.DashboardData.Temperature)
+		a.setMetric("humidity", stationName, device.ModuleName, device.DashboardData.Humidity)
+		a.setMetric("noise", stationName, device.ModuleName, device.DashboardData.Noise)
+		a.setMetric("co2", stationName, device.ModuleName, device.DashboardData.CO2)
+		a.setMetric("pressure", stationName, device.ModuleName, device.DashboardData.Pressure)
 
 		for _, module := range device.Modules {
-			a.setMetric("temperature", stationName, module.ModuleName, float64(module.DashboardData.Temperature))
-			a.setMetric("humidity", stationName, module.ModuleName, float64(module.DashboardData.Humidity))
+			a.setMetric("temperature", stationName, module.ModuleName, module.DashboardData.Temperature)
+			a.setMetric("humidity", stationName, module.ModuleName, module.DashboardData.Humidity)
 		}
 	}
 }
