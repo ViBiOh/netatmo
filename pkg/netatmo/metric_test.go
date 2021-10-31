@@ -7,7 +7,7 @@ func TestSanitizeName(t *testing.T) {
 		name string
 	}
 
-	var cases = []struct {
+	cases := []struct {
 		intention string
 		args      args
 		want      string

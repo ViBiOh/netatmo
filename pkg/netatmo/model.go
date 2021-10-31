@@ -8,9 +8,7 @@ const (
 	Source = "netatmo"
 )
 
-var (
-	noneStationsData StationsData
-)
+var noneStationsData StationsData
 
 // StationsData contains data retrieved when getting stations datas
 type StationsData struct {

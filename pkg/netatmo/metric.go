@@ -7,9 +7,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-var (
-	sanitizeRegexp = regexp.MustCompile(`(?mi)(\S+).*`)
-)
+var sanitizeRegexp = regexp.MustCompile(`(?mi)(\S+).*`)
 
 func createMetrics(prometheusRegisterer prometheus.Registerer, names ...string) (map[string]*prometheus.GaugeVec, error) {
 	if prometheusRegisterer == nil {
