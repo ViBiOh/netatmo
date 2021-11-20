@@ -3,7 +3,7 @@ module github.com/ViBiOh/netatmo
 go 1.17
 
 require (
-	github.com/ViBiOh/httputils/v4 v4.29.5
+	github.com/ViBiOh/httputils/v4 v4.29.8
 	github.com/prometheus/client_golang v1.11.0
 )
 
