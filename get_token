@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+set -o nounset -o pipefail -o errexit
+
+script_dir() {
+  local FILE_SOURCE="${BASH_SOURCE[0]}"
+
+  if [[ -L ${FILE_SOURCE} ]]; then
+    dirname "$(readlink "${FILE_SOURCE}")"
+  else
+    (
+      cd "$(dirname "${FILE_SOURCE}")" && pwd
+    )
+  fi
+}
+
+main() {
+  source "$(script_dir)/scripts/meta" && meta_init "var"
+  var_color
+
+  local NETATMO_APP_ID
+  var_read NETATMO_APP_ID
+
+  local REDIRECT_URI="https://api.vibioh.fr/dump/"
+  local SCOPES="read_station%20read_homecoach"
+
+  open "https://api.netatmo.com/oauth2/authorize?client_id=${NETATMO_APP_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES}&state=netatmo"
+
+  local NETATMO_APP_SECRET
+  var_read NETATMO_APP_SECRET
+
+  local CODE
+  var_read CODE
+
+  curl --request POST https://api.netatmo.com/oauth2/token \
+    --data "grant_type=authorization_code" \
+    --data "client_id=${NETATMO_APP_ID}" \
+    --data "client_secret=${NETATMO_APP_SECRET}" \
+    --data "code=${CODE}" \
+    --data "redirect_uri=${REDIRECT_URI}" \
+    --data "scope=${SCOPES}"
+}
+
+main "${@}"
