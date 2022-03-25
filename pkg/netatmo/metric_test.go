@@ -7,27 +7,23 @@ func TestSanitizeName(t *testing.T) {
 		name string
 	}
 
-	cases := []struct {
-		intention string
-		args      args
-		want      string
+	cases := map[string]struct {
+		args args
+		want string
 	}{
-		{
-			"empty",
+		"empty": {
 			args{
 				name: "",
 			},
 			"",
 		},
-		{
-			"simple",
+		"simple": {
 			args{
 				name: "maison",
 			},
 			"maison",
 		},
-		{
-			"detailed",
+		"detailed": {
 			args{
 				name: "maison (indoor)",
 			},
@@ -35,8 +31,8 @@ func TestSanitizeName(t *testing.T) {
 		},
 	}
 
-	for _, tc := range cases {
-		t.Run(tc.intention, func(t *testing.T) {
+	for intention, tc := range cases {
+		t.Run(intention, func(t *testing.T) {
 			if got := sanitizeName(tc.args.name); got != tc.want {
 				t.Errorf("sanitizeSource() = %s, want %s", got, tc.want)
 			}
