@@ -44,11 +44,11 @@ type Config struct {
 // Flags adds flags for configuring package
 func Flags(fs *flag.FlagSet, prefix string) Config {
 	return Config{
-		accessToken:  flags.New(prefix, "netatmo", "AccessToken").Default("", nil).Label("Access Token").ToString(fs),
-		refreshToken: flags.New(prefix, "netatmo", "RefreshToken").Default("", nil).Label("Refresh Token").ToString(fs),
-		clientID:     flags.New(prefix, "netatmo", "ClientID").Default("", nil).Label("Client ID").ToString(fs),
-		clientSecret: flags.New(prefix, "netatmo", "ClientSecret").Default("", nil).Label("Client Secret").ToString(fs),
-		scopes:       flags.New(prefix, "netatmo", "Scopes").Default("", nil).Label("Scopes, comma separated").ToString(fs),
+		accessToken:  flags.String(fs, prefix, "netatmo", "AccessToken", "Access Token", "", nil),
+		refreshToken: flags.String(fs, prefix, "netatmo", "RefreshToken", "Refresh Token", "", nil),
+		clientID:     flags.String(fs, prefix, "netatmo", "ClientID", "Client ID", "", nil),
+		clientSecret: flags.String(fs, prefix, "netatmo", "ClientSecret", "Client Secret", "", nil),
+		scopes:       flags.String(fs, prefix, "netatmo", "Scopes", "Scopes, comma separated", "", nil),
 	}
 }
 
