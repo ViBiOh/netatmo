@@ -95,7 +95,7 @@ func (a *App) Start(done <-chan struct{}) {
 	}).Start(func(ctx context.Context) error {
 		devices, err := a.getDevices(ctx)
 		if err != nil {
-			return fmt.Errorf("fetch devices: %s", err)
+			return fmt.Errorf("fetch devices: %w", err)
 		}
 
 		a.mutex.Lock()

@@ -38,7 +38,7 @@ func createMetric(prometheusRegisterer prometheus.Registerer, name string) (*pro
 	}, []string{"station", "module"})
 
 	if err := prometheusRegisterer.Register(gauge); err != nil {
-		return nil, fmt.Errorf("registrer %s: %s", name, err)
+		return nil, fmt.Errorf("registrer %s: %w", name, err)
 	}
 
 	return gauge, nil
