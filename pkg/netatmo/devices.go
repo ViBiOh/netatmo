@@ -74,7 +74,7 @@ func (a *App) getDevices(ctx context.Context) ([]Device, error) {
 	if a.HasScope("read_station") {
 		stationsData, err := a.getData(ctx, netatmoGetStationsDataURL)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("read station: %w", err)
 		}
 		devices = append(devices, stationsData.Body.Devices...)
 	}
@@ -82,7 +82,7 @@ func (a *App) getDevices(ctx context.Context) ([]Device, error) {
 	if a.HasScope("read_homecoach") {
 		homeCoachsData, err := a.getData(ctx, netatmoGetHomeCoachsDataURL)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("read homecoach: %w", err)
 		}
 		devices = append(devices, homeCoachsData.Body.Devices...)
 	}
