@@ -84,7 +84,7 @@ func (a *App) Handler() http.Handler {
 }
 
 // Start periodic fetch of data from netatmo API
-func (a *App) Start(done <-chan struct{}) {
+func (a *App) Start(ctx context.Context) {
 	if !a.Enabled() {
 		logger.Warn("app is disabled")
 		return
@@ -92,7 +92,7 @@ func (a *App) Start(done <-chan struct{}) {
 
 	cron.New().Each(time.Minute*5).OnSignal(syscall.SIGUSR1).Now().OnError(func(err error) {
 		logger.Error("%s", err)
-	}).Start(func(ctx context.Context) error {
+	}).Start(ctx, func(ctx context.Context) error {
 		devices, err := a.getDevices(ctx)
 		if err != nil {
 			return fmt.Errorf("fetch devices: %w", err)
@@ -105,7 +105,7 @@ func (a *App) Start(done <-chan struct{}) {
 		a.updatePrometheus()
 
 		return nil
-	}, done)
+	})
 }
 
 // Enabled check if app is enabled
