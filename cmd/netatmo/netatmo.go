@@ -5,10 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	_ "net/http/pprof"
 
@@ -19,9 +19,9 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/httputils"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	"github.com/ViBiOh/httputils/v4/pkg/owasp"
-	"github.com/ViBiOh/httputils/v4/pkg/prometheus"
 	"github.com/ViBiOh/httputils/v4/pkg/recoverer"
 	"github.com/ViBiOh/httputils/v4/pkg/server"
+	"github.com/ViBiOh/httputils/v4/pkg/telemetry"
 	"github.com/ViBiOh/netatmo/pkg/netatmo"
 )
 
@@ -34,12 +34,11 @@ func main() {
 	fs.Usage = flags.Usage(fs)
 
 	appServerConfig := server.Flags(fs, "")
-	promServerConfig := server.Flags(fs, "prometheus", flags.NewOverride("Port", uint(9090)), flags.NewOverride("IdleTimeout", 10*time.Second), flags.NewOverride("ShutdownTimeout", 5*time.Second))
 	healthConfig := health.Flags(fs, "")
 
 	alcotestConfig := alcotest.Flags(fs, "")
 	loggerConfig := logger.Flags(fs, "logger")
-	prometheusConfig := prometheus.Flags(fs, "prometheus", flags.NewOverride("Gzip", false))
+	telemetryConfig := telemetry.Flags(fs, "telemetry")
 	owaspConfig := owasp.Flags(fs, "")
 	corsConfig := cors.Flags(fs, "cors")
 
@@ -50,8 +49,8 @@ func main() {
 	}
 
 	alcotest.DoAndExit(alcotestConfig)
-	logger.Global(logger.New(loggerConfig))
-	defer logger.Close()
+
+	logger.Init(loggerConfig)
 
 	ctx := context.Background()
 
@@ -59,13 +58,20 @@ func main() {
 		fmt.Println(http.ListenAndServe("localhost:9999", http.DefaultServeMux))
 	}()
 
+	telemetryApp, err := telemetry.New(ctx, telemetryConfig)
+	if err != nil {
+		slog.Error("create telemetry", "err", err)
+		os.Exit(1)
+	}
+
 	appServer := server.New(appServerConfig)
-	promServer := server.New(promServerConfig)
-	prometheusApp := prometheus.New(prometheusConfig)
 	healthApp := health.New(healthConfig)
 
-	netatmoApp, err := netatmo.New(netatmoConfig, prometheusApp.Registerer())
-	logger.Fatal(err)
+	netatmoApp, err := netatmo.New(netatmoConfig, telemetryApp.GetMeterProvider())
+	if err != nil {
+		slog.Error("create netatmo", "err", err)
+		os.Exit(1)
+	}
 
 	netatmoHandler := http.StripPrefix(devicesPath, netatmoApp.Handler())
 
@@ -82,9 +88,8 @@ func main() {
 
 	endCtx := healthApp.End(ctx)
 
-	go promServer.Start(endCtx, "prometheus", prometheusApp.Handler())
-	go appServer.Start(endCtx, "http", httputils.Handler(appHandler, healthApp, recoverer.Middleware, prometheusApp.Middleware, owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware))
+	go appServer.Start(endCtx, "http", httputils.Handler(appHandler, healthApp, recoverer.Middleware, telemetryApp.Middleware("http"), owasp.New(owaspConfig).Middleware, cors.New(corsConfig).Middleware))
 
 	healthApp.WaitForTermination(appServer.Done())
-	server.GracefulWait(appServer.Done(), promServer.Done())
+	server.GracefulWait(appServer.Done())
 }

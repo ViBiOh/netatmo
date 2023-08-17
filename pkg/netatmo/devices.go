@@ -3,11 +3,11 @@ package netatmo
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"net/url"
 
 	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
-	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	"github.com/ViBiOh/httputils/v4/pkg/request"
 )
 
@@ -18,7 +18,7 @@ const (
 )
 
 func (a *App) refreshAccessToken(ctx context.Context) error {
-	logger.Info("Refreshing token")
+	slog.Info("Refreshing token")
 
 	payload := url.Values{
 		"grant_type":    []string{"refresh_token"},
