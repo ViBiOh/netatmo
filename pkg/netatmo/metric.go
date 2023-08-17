@@ -1,78 +1,100 @@
 package netatmo
 
 import (
-	"fmt"
+	"context"
 	"regexp"
 
-	"github.com/prometheus/client_golang/prometheus"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
 )
 
 var sanitizeRegexp = regexp.MustCompile(`(?mi)(\S+).*`)
 
-func createMetrics(prometheusRegisterer prometheus.Registerer, names ...string) (map[string]*prometheus.GaugeVec, error) {
-	if prometheusRegisterer == nil {
-		return nil, nil
-	}
+func (a *App) createMetrics(meterProvider metric.MeterProvider, names ...string) error {
+	meter := meterProvider.Meter("github.com/ViBiOh/netatmo/pkg/netatmo")
 
-	metrics := make(map[string]*prometheus.GaugeVec)
 	for _, name := range names {
-		metric, err := createMetric(prometheusRegisterer, name)
-		if err != nil {
-			return nil, err
-		}
-
-		metrics[name] = metric
-	}
-
-	return metrics, nil
-}
-
-func createMetric(prometheusRegisterer prometheus.Registerer, name string) (*prometheus.GaugeVec, error) {
-	if prometheusRegisterer == nil {
-		return nil, nil
-	}
-
-	gauge := prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: Source,
-		Name:      name,
-	}, []string{"station", "module"})
-
-	if err := prometheusRegisterer.Register(gauge); err != nil {
-		return nil, fmt.Errorf("registrer %s: %w", name, err)
-	}
-
-	return gauge, nil
-}
-
-func (a *App) setMetric(name, station, module string, value float64) {
-	metric, ok := a.metrics[name]
-	if !ok {
-		return
-	}
-
-	labels := prometheus.Labels{
-		"station": station,
-		"module":  module,
-	}
-
-	metric.With(labels).Set(value)
-}
-
-func (a *App) updatePrometheus() {
-	for _, device := range a.devices {
-		stationName := sanitizeName(device.StationName)
-
-		a.setMetric("temperature", stationName, device.ModuleName, device.DashboardData.Temperature)
-		a.setMetric("humidity", stationName, device.ModuleName, device.DashboardData.Humidity)
-		a.setMetric("noise", stationName, device.ModuleName, device.DashboardData.Noise)
-		a.setMetric("co2", stationName, device.ModuleName, device.DashboardData.CO2)
-		a.setMetric("pressure", stationName, device.ModuleName, device.DashboardData.Pressure)
-
-		for _, module := range device.Modules {
-			a.setMetric("temperature", stationName, module.ModuleName, module.DashboardData.Temperature)
-			a.setMetric("humidity", stationName, module.ModuleName, module.DashboardData.Humidity)
+		if err := a.createMetric(meter, name); err != nil {
+			return err
 		}
 	}
+
+	return nil
+}
+
+func (a *App) createMetric(meter metric.Meter, name string) error {
+	callback := func(ctx context.Context, fo metric.Float64Observer) error {
+		a.mutex.RLock()
+		defer a.mutex.RUnlock()
+
+		switch name {
+		case "temperature":
+			for _, device := range a.devices {
+				stationName := sanitizeName(device.StationName)
+
+				fo.Observe(device.DashboardData.Temperature, metric.WithAttributes(
+					attribute.String("station", stationName),
+					attribute.String("module", device.ModuleName),
+				))
+
+				for _, module := range device.Modules {
+					fo.Observe(module.DashboardData.Temperature, metric.WithAttributes(
+						attribute.String("station", stationName),
+						attribute.String("module", module.ModuleName),
+					))
+				}
+			}
+		case "humidity":
+			for _, device := range a.devices {
+				stationName := sanitizeName(device.StationName)
+
+				fo.Observe(device.DashboardData.Humidity, metric.WithAttributes(
+					attribute.String("station", stationName),
+					attribute.String("module", device.ModuleName),
+				))
+
+				for _, module := range device.Modules {
+					fo.Observe(module.DashboardData.Humidity, metric.WithAttributes(
+						attribute.String("station", stationName),
+						attribute.String("module", module.ModuleName),
+					))
+				}
+			}
+		case "noise":
+			for _, device := range a.devices {
+				stationName := sanitizeName(device.StationName)
+
+				fo.Observe(device.DashboardData.Noise, metric.WithAttributes(
+					attribute.String("station", stationName),
+					attribute.String("module", device.ModuleName),
+				))
+			}
+		case "co2":
+			for _, device := range a.devices {
+				stationName := sanitizeName(device.StationName)
+
+				fo.Observe(device.DashboardData.CO2, metric.WithAttributes(
+					attribute.String("station", stationName),
+					attribute.String("module", device.ModuleName),
+				))
+			}
+		case "pressure":
+			for _, device := range a.devices {
+				stationName := sanitizeName(device.StationName)
+
+				fo.Observe(device.DashboardData.Pressure, metric.WithAttributes(
+					attribute.String("station", stationName),
+					attribute.String("module", device.ModuleName),
+				))
+			}
+		}
+
+		return nil
+	}
+
+	_, err := meter.Float64ObservableGauge("netatmo_"+name, metric.WithFloat64Callback(callback))
+
+	return err
 }
 
 func sanitizeName(name string) string {
