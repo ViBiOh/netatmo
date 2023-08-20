@@ -67,7 +67,7 @@ func main() {
 	appServer := server.New(appServerConfig)
 	healthApp := health.New(healthConfig)
 
-	netatmoApp, err := netatmo.New(netatmoConfig, telemetryApp.GetMeterProvider())
+	netatmoApp, err := netatmo.New(netatmoConfig, telemetryApp.MeterProvider())
 	if err != nil {
 		slog.Error("create netatmo", "err", err)
 		os.Exit(1)
