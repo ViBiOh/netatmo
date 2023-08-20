@@ -40,3 +40,5 @@ spec:
     pprof:
       enabled: true
     service: null
+    probes:
+      enabled: false

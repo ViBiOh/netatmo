@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
-	"net/http"
 	"strings"
 	"sync"
 	"syscall"
@@ -13,7 +12,6 @@ import (
 
 	"github.com/ViBiOh/flags"
 	"github.com/ViBiOh/httputils/v4/pkg/cron"
-	"github.com/ViBiOh/httputils/v4/pkg/httpjson"
 	"go.opentelemetry.io/otel/metric"
 )
 
@@ -65,20 +63,6 @@ func New(config Config, meterProvider metric.MeterProvider) (*App, error) {
 	}
 
 	return app, nil
-}
-
-// Handler for request. Should be use with net/http
-func (a *App) Handler() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-
-		a.mutex.RLock()
-		defer a.mutex.RUnlock()
-
-		httpjson.WriteArray(w, http.StatusOK, a.devices)
-	})
 }
 
 // Start periodic fetch of data from netatmo API

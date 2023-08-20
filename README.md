@@ -13,35 +13,17 @@ Be careful when using the CLI values, if someone list the processes on the syste
 ```bash
 Usage of netatmo:
   --accessToken       string    [netatmo] Access Token ${NETATMO_ACCESS_TOKEN}
-  --address           string    [server] Listen address ${NETATMO_ADDRESS}
-  --cert              string    [server] Certificate file ${NETATMO_CERT}
   --clientID          string    [netatmo] Client ID ${NETATMO_CLIENT_ID}
   --clientSecret      string    [netatmo] Client Secret ${NETATMO_CLIENT_SECRET}
-  --corsCredentials             [cors] Access-Control-Allow-Credentials ${NETATMO_CORS_CREDENTIALS} (default false)
-  --corsExpose        string    [cors] Access-Control-Expose-Headers ${NETATMO_CORS_EXPOSE}
-  --corsHeaders       string    [cors] Access-Control-Allow-Headers ${NETATMO_CORS_HEADERS} (default "Content-Type")
-  --corsMethods       string    [cors] Access-Control-Allow-Methods ${NETATMO_CORS_METHODS} (default "GET")
-  --corsOrigin        string    [cors] Access-Control-Allow-Origin ${NETATMO_CORS_ORIGIN} (default "*")
-  --csp               string    [owasp] Content-Security-Policy ${NETATMO_CSP} (default "default-src 'self'; base-uri 'self'")
-  --frameOptions      string    [owasp] X-Frame-Options ${NETATMO_FRAME_OPTIONS} (default "deny")
   --graceDuration     duration  [http] Grace duration when SIGTERM received ${NETATMO_GRACE_DURATION} (default 30s)
-  --hsts                        [owasp] Indicate Strict Transport Security ${NETATMO_HSTS} (default true)
-  --idleTimeout       duration  [server] Idle Timeout ${NETATMO_IDLE_TIMEOUT} (default 2m0s)
-  --key               string    [server] Key file ${NETATMO_KEY}
   --loggerJson                  [logger] Log format as JSON ${NETATMO_LOGGER_JSON} (default false)
   --loggerLevel       string    [logger] Logger level ${NETATMO_LOGGER_LEVEL} (default "INFO")
   --loggerLevelKey    string    [logger] Key for level in JSON ${NETATMO_LOGGER_LEVEL_KEY} (default "level")
   --loggerMessageKey  string    [logger] Key for message in JSON ${NETATMO_LOGGER_MESSAGE_KEY} (default "msg")
   --loggerTimeKey     string    [logger] Key for timestamp in JSON ${NETATMO_LOGGER_TIME_KEY} (default "time")
   --okStatus          int       [http] Healthy HTTP Status code ${NETATMO_OK_STATUS} (default 204)
-  --port              uint      [server] Listen port (0 to disable) ${NETATMO_PORT} (default 1080)
-  --readTimeout       duration  [server] Read Timeout ${NETATMO_READ_TIMEOUT} (default 5s)
   --refreshToken      string    [netatmo] Refresh Token ${NETATMO_REFRESH_TOKEN}
   --scopes            string    [netatmo] Scopes, comma separated ${NETATMO_SCOPES}
-  --shutdownTimeout   duration  [server] Shutdown Timeout ${NETATMO_SHUTDOWN_TIMEOUT} (default 10s)
   --telemetryRate     string    [telemetry] OpenTelemetry sample rate, 'always', 'never' or a float value ${NETATMO_TELEMETRY_RATE} (default "always")
   --telemetryURL      string    [telemetry] OpenTelemetry gRPC endpoint (e.g. otel-exporter:4317) ${NETATMO_TELEMETRY_URL}
-  --url               string    [alcotest] URL to check ${NETATMO_URL}
-  --userAgent         string    [alcotest] User-Agent for check ${NETATMO_USER_AGENT} (default "Alcotest")
-  --writeTimeout      duration  [server] Write Timeout ${NETATMO_WRITE_TIMEOUT} (default 10s)
 ```
