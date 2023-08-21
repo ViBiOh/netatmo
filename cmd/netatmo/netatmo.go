@@ -14,6 +14,7 @@ import (
 	"github.com/ViBiOh/flags"
 	"github.com/ViBiOh/httputils/v4/pkg/health"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
+	"github.com/ViBiOh/httputils/v4/pkg/request"
 	"github.com/ViBiOh/httputils/v4/pkg/telemetry"
 	"github.com/ViBiOh/netatmo/pkg/netatmo"
 )
@@ -46,6 +47,8 @@ func main() {
 		slog.Error("create telemetry", "err", err)
 		os.Exit(1)
 	}
+
+	request.AddOpenTelemetryToDefaultClient(telemetryApp.MeterProvider(), telemetryApp.TracerProvider())
 
 	healthApp := health.New(healthConfig)
 
