@@ -10,11 +10,11 @@ import (
 
 var sanitizeRegexp = regexp.MustCompile(`(?mi)(\S+).*`)
 
-func (a *App) createMetrics(meterProvider metric.MeterProvider, names ...string) error {
+func (s *Service) createMetrics(meterProvider metric.MeterProvider, names ...string) error {
 	meter := meterProvider.Meter("github.com/ViBiOh/netatmo/pkg/netatmo")
 
 	for _, name := range names {
-		if err := a.createMetric(meter, name); err != nil {
+		if err := s.createMetric(meter, name); err != nil {
 			return err
 		}
 	}
@@ -22,14 +22,14 @@ func (a *App) createMetrics(meterProvider metric.MeterProvider, names ...string)
 	return nil
 }
 
-func (a *App) createMetric(meter metric.Meter, name string) error {
+func (s *Service) createMetric(meter metric.Meter, name string) error {
 	callback := func(ctx context.Context, fo metric.Float64Observer) error {
-		a.mutex.RLock()
-		defer a.mutex.RUnlock()
+		s.mutex.RLock()
+		defer s.mutex.RUnlock()
 
 		switch name {
 		case "temperature":
-			for _, device := range a.devices {
+			for _, device := range s.devices {
 				stationName := sanitizeName(device.StationName)
 
 				fo.Observe(device.DashboardData.Temperature, metric.WithAttributes(
@@ -45,7 +45,7 @@ func (a *App) createMetric(meter metric.Meter, name string) error {
 				}
 			}
 		case "humidity":
-			for _, device := range a.devices {
+			for _, device := range s.devices {
 				stationName := sanitizeName(device.StationName)
 
 				fo.Observe(device.DashboardData.Humidity, metric.WithAttributes(
@@ -61,7 +61,7 @@ func (a *App) createMetric(meter metric.Meter, name string) error {
 				}
 			}
 		case "noise":
-			for _, device := range a.devices {
+			for _, device := range s.devices {
 				stationName := sanitizeName(device.StationName)
 
 				fo.Observe(device.DashboardData.Noise, metric.WithAttributes(
@@ -70,7 +70,7 @@ func (a *App) createMetric(meter metric.Meter, name string) error {
 				))
 			}
 		case "co2":
-			for _, device := range a.devices {
+			for _, device := range s.devices {
 				stationName := sanitizeName(device.StationName)
 
 				fo.Observe(device.DashboardData.CO2, metric.WithAttributes(
@@ -79,7 +79,7 @@ func (a *App) createMetric(meter metric.Meter, name string) error {
 				))
 			}
 		case "pressure":
-			for _, device := range a.devices {
+			for _, device := range s.devices {
 				stationName := sanitizeName(device.StationName)
 
 				fo.Observe(device.DashboardData.Pressure, metric.WithAttributes(

@@ -17,14 +17,14 @@ const (
 	netatmoRefreshTokenURL      = "https://api.netatmo.com/oauth2/token"
 )
 
-func (a *App) refreshAccessToken(ctx context.Context) error {
+func (s *Service) refreshAccessToken(ctx context.Context) error {
 	slog.Info("Refreshing token")
 
 	payload := url.Values{
 		"grant_type":    []string{"refresh_token"},
-		"refresh_token": []string{a.refreshToken},
-		"client_id":     []string{a.clientID},
-		"client_secret": []string{a.clientSecret},
+		"refresh_token": []string{s.refreshToken},
+		"client_id":     []string{s.clientID},
+		"client_secret": []string{s.clientSecret},
 	}
 
 	resp, err := request.Post(netatmoRefreshTokenURL).Form(ctx, payload)
@@ -37,23 +37,23 @@ func (a *App) refreshAccessToken(ctx context.Context) error {
 		return fmt.Errorf("read token: %w", err)
 	}
 
-	a.accessToken = token.AccessToken
+	s.accessToken = token.AccessToken
 
 	return nil
 }
 
-func (a *App) getData(ctx context.Context, url string) (StationsData, error) {
-	if !a.Enabled() {
+func (s *Service) getData(ctx context.Context, url string) (StationsData, error) {
+	if !s.Enabled() {
 		return noneStationsData, fmt.Errorf("app not enabled")
 	}
 
-	resp, err := request.Get(fmt.Sprintf("%s%s", url, a.accessToken)).Send(ctx, nil)
+	resp, err := request.Get(fmt.Sprintf("%s%s", url, s.accessToken)).Send(ctx, nil)
 	if err != nil && resp != nil && resp.StatusCode == http.StatusForbidden {
-		if err := a.refreshAccessToken(ctx); err != nil {
+		if err := s.refreshAccessToken(ctx); err != nil {
 			return noneStationsData, err
 		}
 
-		resp, err = request.Get(fmt.Sprintf("%s%s", url, a.accessToken)).Send(ctx, nil)
+		resp, err = request.Get(fmt.Sprintf("%s%s", url, s.accessToken)).Send(ctx, nil)
 	}
 
 	if err != nil {
@@ -68,19 +68,19 @@ func (a *App) getData(ctx context.Context, url string) (StationsData, error) {
 	return infos, nil
 }
 
-func (a *App) getDevices(ctx context.Context) ([]Device, error) {
+func (s *Service) getDevices(ctx context.Context) ([]Device, error) {
 	devices := make([]Device, 0)
 
-	if a.HasScope("read_station") {
-		stationsData, err := a.getData(ctx, netatmoGetStationsDataURL)
+	if s.HasScope("read_station") {
+		stationsData, err := s.getData(ctx, netatmoGetStationsDataURL)
 		if err != nil {
 			return nil, fmt.Errorf("read station: %w", err)
 		}
 		devices = append(devices, stationsData.Body.Devices...)
 	}
 
-	if a.HasScope("read_homecoach") {
-		homeCoachsData, err := a.getData(ctx, netatmoGetHomeCoachsDataURL)
+	if s.HasScope("read_homecoach") {
+		homeCoachsData, err := s.getData(ctx, netatmoGetHomeCoachsDataURL)
 		if err != nil {
 			return nil, fmt.Errorf("read homecoach: %w", err)
 		}

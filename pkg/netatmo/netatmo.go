@@ -15,8 +15,7 @@ import (
 	"go.opentelemetry.io/otel/metric"
 )
 
-// App of package
-type App struct {
+type Service struct {
 	clientID     string
 	clientSecret string
 	accessToken  string
@@ -28,34 +27,33 @@ type App struct {
 	mutex sync.RWMutex
 }
 
-// Config of package
 type Config struct {
-	accessToken  *string
-	refreshToken *string
-	clientID     *string
-	clientSecret *string
-	scopes       *string
+	AccessToken  string
+	RefreshToken string
+	ClientID     string
+	ClientSecret string
+	Scopes       string
 }
 
-// Flags adds flags for configuring package
-func Flags(fs *flag.FlagSet, prefix string) Config {
-	return Config{
-		accessToken:  flags.New("AccessToken", "Access Token").Prefix(prefix).DocPrefix("netatmo").String(fs, "", nil),
-		refreshToken: flags.New("RefreshToken", "Refresh Token").Prefix(prefix).DocPrefix("netatmo").String(fs, "", nil),
-		clientID:     flags.New("ClientID", "Client ID").Prefix(prefix).DocPrefix("netatmo").String(fs, "", nil),
-		clientSecret: flags.New("ClientSecret", "Client Secret").Prefix(prefix).DocPrefix("netatmo").String(fs, "", nil),
-		scopes:       flags.New("Scopes", "Scopes, comma separated").Prefix(prefix).DocPrefix("netatmo").String(fs, "", nil),
-	}
+func Flags(fs *flag.FlagSet, prefix string) *Config {
+	var config Config
+
+	flags.New("AccessToken", "Access Token").Prefix(prefix).DocPrefix("netatmo").StringVar(fs, &config.AccessToken, "", nil)
+	flags.New("RefreshToken", "Refresh Token").Prefix(prefix).DocPrefix("netatmo").StringVar(fs, &config.RefreshToken, "", nil)
+	flags.New("ClientID", "Client ID").Prefix(prefix).DocPrefix("netatmo").StringVar(fs, &config.ClientID, "", nil)
+	flags.New("ClientSecret", "Client Secret").Prefix(prefix).DocPrefix("netatmo").StringVar(fs, &config.ClientSecret, "", nil)
+	flags.New("Scopes", "Scopes, comma separated").Prefix(prefix).DocPrefix("netatmo").StringVar(fs, &config.Scopes, "", nil)
+
+	return &config
 }
 
-// New creates new App from Config
-func New(config Config, meterProvider metric.MeterProvider) (*App, error) {
-	app := &App{
-		clientID:     strings.TrimSpace(*config.clientID),
-		clientSecret: strings.TrimSpace(*config.clientSecret),
-		accessToken:  strings.TrimSpace(*config.accessToken),
-		refreshToken: strings.TrimSpace(*config.refreshToken),
-		scopes:       strings.TrimSpace(*config.scopes),
+func New(config *Config, meterProvider metric.MeterProvider) (*Service, error) {
+	app := &Service{
+		clientID:     config.ClientID,
+		clientSecret: config.ClientSecret,
+		accessToken:  config.AccessToken,
+		refreshToken: config.RefreshToken,
+		scopes:       config.Scopes,
 	}
 
 	if err := app.createMetrics(meterProvider, "temperature", "humidity", "noise", "co2", "pressure"); err != nil {
@@ -65,9 +63,8 @@ func New(config Config, meterProvider metric.MeterProvider) (*App, error) {
 	return app, nil
 }
 
-// Start periodic fetch of data from netatmo API
-func (a *App) Start(ctx context.Context) {
-	if !a.Enabled() {
+func (s *Service) Start(ctx context.Context) {
+	if !s.Enabled() {
 		slog.Warn("app is disabled")
 		return
 	}
@@ -75,26 +72,24 @@ func (a *App) Start(ctx context.Context) {
 	cron.New().Each(time.Minute*5).OnSignal(syscall.SIGUSR1).Now().OnError(func(err error) {
 		slog.Error("refresh cron", "err", err)
 	}).Start(ctx, func(ctx context.Context) error {
-		devices, err := a.getDevices(ctx)
+		devices, err := s.getDevices(ctx)
 		if err != nil {
 			return fmt.Errorf("fetch devices: %w", err)
 		}
 
-		a.mutex.Lock()
-		defer a.mutex.Unlock()
+		s.mutex.Lock()
+		defer s.mutex.Unlock()
 
-		a.devices = devices
+		s.devices = devices
 
 		return nil
 	})
 }
 
-// Enabled check if app is enabled
-func (a *App) Enabled() bool {
-	return a.accessToken != ""
+func (s *Service) Enabled() bool {
+	return s.accessToken != ""
 }
 
-// HasScope check if given scope is configured
-func (a *App) HasScope(scope string) bool {
-	return strings.Contains(a.scopes, scope)
+func (s *Service) HasScope(scope string) bool {
+	return strings.Contains(s.scopes, scope)
 }
