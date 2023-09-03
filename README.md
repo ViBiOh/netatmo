@@ -15,7 +15,7 @@ Usage of netatmo:
   --accessToken       string    [netatmo] Access Token ${NETATMO_ACCESS_TOKEN}
   --clientID          string    [netatmo] Client ID ${NETATMO_CLIENT_ID}
   --clientSecret      string    [netatmo] Client Secret ${NETATMO_CLIENT_SECRET}
-  --graceDuration     duration  [http] Grace duration when SIGTERM received ${NETATMO_GRACE_DURATION} (default 30s)
+  --graceDuration     duration  [http] Grace duration when signal received ${NETATMO_GRACE_DURATION} (default 30s)
   --loggerJson                  [logger] Log format as JSON ${NETATMO_LOGGER_JSON} (default false)
   --loggerLevel       string    [logger] Logger level ${NETATMO_LOGGER_LEVEL} (default "INFO")
   --loggerLevelKey    string    [logger] Key for level in JSON ${NETATMO_LOGGER_LEVEL_KEY} (default "level")
