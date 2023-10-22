@@ -50,7 +50,7 @@ func main() {
 
 	request.AddOpenTelemetryToDefaultClient(telemetryApp.MeterProvider(), telemetryApp.TracerProvider())
 
-	healthApp := health.New(healthConfig)
+	healthApp := health.New(ctx, healthConfig)
 
 	netatmoApp, err := netatmo.New(netatmoConfig, telemetryApp.MeterProvider())
 	if err != nil {
@@ -58,5 +58,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	netatmoApp.Start(healthApp.Done(ctx))
+	netatmoApp.Start(healthApp.DoneCtx())
 }
