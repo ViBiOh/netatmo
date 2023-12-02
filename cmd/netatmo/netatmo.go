@@ -44,17 +44,20 @@ func main() {
 
 	telemetryApp, err := telemetry.New(ctx, telemetryConfig)
 	if err != nil {
-		slog.Error("create telemetry", "err", err)
+		slog.ErrorContext(ctx, "create telemetry", "err", err)
 		os.Exit(1)
 	}
 
+	defer telemetryApp.Close(ctx)
+
+	logger.AddOpenTelemetryToDefaultLogger(telemetryApp)
 	request.AddOpenTelemetryToDefaultClient(telemetryApp.MeterProvider(), telemetryApp.TracerProvider())
 
 	healthApp := health.New(ctx, healthConfig)
 
 	netatmoApp, err := netatmo.New(netatmoConfig, telemetryApp.MeterProvider())
 	if err != nil {
-		slog.Error("create netatmo", "err", err)
+		slog.ErrorContext(ctx, "create netatmo", "err", err)
 		os.Exit(1)
 	}
 

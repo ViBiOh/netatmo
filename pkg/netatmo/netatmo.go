@@ -65,12 +65,12 @@ func New(config *Config, meterProvider metric.MeterProvider) (*Service, error) {
 
 func (s *Service) Start(ctx context.Context) {
 	if !s.Enabled() {
-		slog.Warn("app is disabled")
+		slog.WarnContext(ctx, "app is disabled")
 		return
 	}
 
-	cron.New().Each(time.Minute*5).OnSignal(syscall.SIGUSR1).Now().OnError(func(err error) {
-		slog.Error("refresh cron", "err", err)
+	cron.New().Each(time.Minute*5).OnSignal(syscall.SIGUSR1).Now().OnError(func(ctx context.Context, err error) {
+		slog.ErrorContext(ctx, "refresh cron", "err", err)
 	}).Start(ctx, func(ctx context.Context) error {
 		devices, err := s.getDevices(ctx)
 		if err != nil {

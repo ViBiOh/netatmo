@@ -18,7 +18,7 @@ const (
 )
 
 func (s *Service) refreshAccessToken(ctx context.Context) error {
-	slog.Info("Refreshing token")
+	slog.InfoContext(ctx, "Refreshing token")
 
 	payload := url.Values{
 		"grant_type":    []string{"refresh_token"},
