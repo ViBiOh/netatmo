@@ -44,7 +44,7 @@ func main() {
 
 	telemetryApp, err := telemetry.New(ctx, telemetryConfig)
 	if err != nil {
-		slog.ErrorContext(ctx, "create telemetry", "err", err)
+		slog.ErrorContext(ctx, "create telemetry", "error", err)
 		os.Exit(1)
 	}
 
@@ -57,7 +57,7 @@ func main() {
 
 	netatmoApp, err := netatmo.New(netatmoConfig, telemetryApp.MeterProvider())
 	if err != nil {
-		slog.ErrorContext(ctx, "create netatmo", "err", err)
+		slog.ErrorContext(ctx, "create netatmo", "error", err)
 		os.Exit(1)
 	}
 

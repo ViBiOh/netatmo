@@ -70,7 +70,7 @@ func (s *Service) Start(ctx context.Context) {
 	}
 
 	cron.New().Each(time.Minute*5).OnSignal(syscall.SIGUSR1).Now().OnError(func(ctx context.Context, err error) {
-		slog.ErrorContext(ctx, "refresh cron", "err", err)
+		slog.ErrorContext(ctx, "refresh cron", "error", err)
 	}).Start(ctx, func(ctx context.Context) error {
 		devices, err := s.getDevices(ctx)
 		if err != nil {
