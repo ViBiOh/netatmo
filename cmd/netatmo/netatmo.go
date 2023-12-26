@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"log/slog"
 	"net/http"
 	"os"
 
@@ -43,10 +42,7 @@ func main() {
 	}()
 
 	telemetryApp, err := telemetry.New(ctx, telemetryConfig)
-	if err != nil {
-		slog.ErrorContext(ctx, "create telemetry", "error", err)
-		os.Exit(1)
-	}
+	logger.FatalfOnErr(ctx, err, "create telemetry")
 
 	defer telemetryApp.Close(ctx)
 
@@ -56,10 +52,7 @@ func main() {
 	healthApp := health.New(ctx, healthConfig)
 
 	netatmoApp, err := netatmo.New(netatmoConfig, telemetryApp.MeterProvider())
-	if err != nil {
-		slog.ErrorContext(ctx, "create netatmo", "error", err)
-		os.Exit(1)
-	}
+	logger.FatalfOnErr(ctx, err, "create netatmo")
 
 	netatmoApp.Start(healthApp.DoneCtx())
 }
