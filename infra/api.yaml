@@ -43,3 +43,5 @@ spec:
     service: null
     probes:
       enabled: false
+    autoscaling:
+      enabled: false
