@@ -26,12 +26,31 @@ spec:
     image:
       name: vibioh/netatmo
       tag: "202401180919" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
+    labels:
+      tags.datadoghq.com/env: "production"
+      tags.datadoghq.com/service: "netatmo"
+      tags.datadoghq.com/version: "202401180919" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
+    env:
+      - name: GOMAXPROCS
+        valueFrom:
+          resourceFieldRef:
+            resource: limits.cpu
+      - name: GOMEMLIMIT
+        valueFrom:
+          resourceFieldRef:
+            resource: limits.memory
+      - name: VERSION
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.labels['tags.datadoghq.com/version']
+      - name: OTEL_SERVICE_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.labels['tags.datadoghq.com/service']
     config:
-      GOMAXPROCS: "1"
       NETATMO_LOGGER_JSON: "true"
       NETATMO_TELEMETRY_URL: datadog.observability:4317
       OTEL_RESOURCE_ATTRIBUTES: env=production,git.repository_url=github.com/ViBiOh/netatmo
-      OTEL_SERVICE_NAME: netatmo
     secrets:
       NETATMO_ACCESS_TOKEN: AgAecmqrMMI5uD5tunGruGr5IItbYZ1EAktiudrLRBrhQqN2DT9zWHF5VWXi5FuSIGn4m2IGP40eNngOQX6FjhTj4HkL4ej/7NNzmZkvp6Gg1B50uuHcHF6c3Fi0VH2C5besFmvxdm7jeAAyyxE81wECMZ9fZCbT0m3Os3TvsqQRDa3pQL3nit8F2kuI5mimHgpLU3l0rI9zcsys4Q2TVHTYR3PjOpfctj8rkOTJH4uvuuEIki6dot6JKKOP5szb6HCtewS3v1jxd/HyJlYeCUlGBFb6dmLGyaocnoG26CeTnGjhbUquIFM+HLte/hca9O1MHElyMUr5N0MaV+0trXsIrv3ffpIcSw24TvjCQ8ViXoGYfMClLGPVFWS9exV+MHaEbL+sKj9nFo+IkNz7fHVm0CgtvzgSuskwbkZFny7jhspzSxGtYwYxjzgfR33ll+KFN9FmKXjh15DHk7IOU0YOP7qy28dSUmchHacm515GWrNWygLKAD+2/Q13avSk00tG97ZVAfFVQiMfWdtwYBnjhGQlIs9EarsPUENIPJ1KOGz/OXxRKEvUt2/Vy5xRU6qIxdlJ2TDv6EfOjLj6kUkpCFuDjf/bNFw/wYKaTkJu6QlJWw48Pq9rBuO64ku8jVNXyYyVBrnlVydm6jFNVUnX9eYz184h7dGY5wAyUL97AMii6Qm0s1lfG+ApWKCs9DBb5oYA3ba8DkKvVq4E8ogkCrVgRE6uJZhAvLMRKIVvzY4GjnOve30TUfJNoO95nafzPgo1+gFXDhc=
       NETATMO_CLIENT_ID: AgC9OIAz2rtnSrr8m2WSdw2h9npDa/1t1jiMfLhj1Bzow682hFYRIwWwOgiJ/Qq9CC1Vklah5dkvjX56U9cLeDKdB+ZMGvb9G0bblzYyUMYEFRPbet6IWCbdQ60z1pMiWKuG44u0I8Ba3dswkn2RmV41qAWN5tkt4Y90XF3cOBZTb24K9Pk+O/aJuR7dQU4pSPyWZzqo3bP0GRxASO6DQQIMUknD+dLa82Norx/jC7stpPKfN00/31itYvhLhnEAEc7in4S5adRE+woslQbHewDKlf1jv3zoaoeTPz9XHBNiaFgI/2gMNNKqObeKeZVwbZLK1E/7pOzqH+0EujTrY9MSCQZL/M3xky2r5xagn1ZiKliP90bnqE2C3ae1sst2+kjxtV692uiJd0m7xnhq6sYnW+Hesw5jOnpb4dxF14XmOxtdAPCgeVZo/uWIPGBgoOt+MwGgoA0G1CO5z9780EZfW4nvexTMiJkRmh+aLrZgoRfQ0E7N6ttHe7NfMNUCXkFaRZ0btXmJpPvyo72blWi8j8UfoO45lODWylBn5buHJiiOKGaPdsCF1MHt+QclwraXjkwYwOBk8Qxx05gtFrah5QeyDSjGm1tgV6KXEjcM/PUVASJ0DfeTZJh6IYPaPYYOPMnnSs+iOFueewtVcFU/ZTEyTBycxX+JxxVVwCTNoRUIKBiDwh2ZeAdK1LweDjOiOOhINISa+vtfReJUWVAh4UHcdQh2JGQ=
