@@ -25,11 +25,11 @@ spec:
     nameOverride: netatmo
     image:
       name: vibioh/netatmo
-      tag: "202403042252" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
+      tag: "202403091207" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
     labels:
       tags.datadoghq.com/env: "production"
       tags.datadoghq.com/service: "netatmo"
-      tags.datadoghq.com/version: "202403042252" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
+      tags.datadoghq.com/version: "202403091207" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
     env:
       - name: GOMAXPROCS
         valueFrom:
