@@ -12,6 +12,7 @@ Be careful when using the CLI values, if someone list the processes on the syste
 
 ```bash
 Usage of netatmo:
+  --cipherSecret                string    [secret] Secret for ciphering token ${NETATMO_CIPHER_SECRET}
   --clientID                    string    [netatmo] Client ID ${NETATMO_CLIENT_ID}
   --clientSecret                string    [netatmo] Client Secret ${NETATMO_CLIENT_SECRET}
   --graceDuration               duration  [http] Grace duration when signal received ${NETATMO_GRACE_DURATION} (default 30s)

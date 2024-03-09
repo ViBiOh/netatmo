@@ -13,11 +13,13 @@ import (
 	absto "github.com/ViBiOh/absto/pkg/model"
 	"github.com/ViBiOh/flags"
 	"github.com/ViBiOh/httputils/v4/pkg/cron"
+	"github.com/ViBiOh/httputils/v4/pkg/e2e"
 	"go.opentelemetry.io/otel/metric"
 )
 
 type Service struct {
 	storage      absto.Storage
+	e2e          e2e.Service
 	token        Token
 	clientID     string
 	clientSecret string
@@ -42,11 +44,12 @@ func Flags(fs *flag.FlagSet, prefix string) *Config {
 	return &config
 }
 
-func New(config *Config, storage absto.Storage, meterProvider metric.MeterProvider) (*Service, error) {
+func New(config *Config, storage absto.Storage, e2eService e2e.Service, meterProvider metric.MeterProvider) (*Service, error) {
 	app := &Service{
 		clientID:     config.ClientID,
 		clientSecret: config.ClientSecret,
 		scopes:       config.Scopes,
+		e2e:          e2eService,
 		storage:      storage,
 	}
 
