@@ -10,6 +10,7 @@ import (
 
 	_ "net/http/pprof"
 
+	"github.com/ViBiOh/absto/pkg/absto"
 	"github.com/ViBiOh/flags"
 	"github.com/ViBiOh/httputils/v4/pkg/health"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
@@ -28,6 +29,7 @@ func main() {
 	telemetryConfig := telemetry.Flags(fs, "telemetry")
 
 	netatmoConfig := netatmo.Flags(fs, "")
+	abstoConfig := absto.Flags(fs, "storage")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		log.Fatal(err)
@@ -51,7 +53,10 @@ func main() {
 
 	healthApp := health.New(ctx, healthConfig)
 
-	netatmoApp, err := netatmo.New(netatmoConfig, telemetryApp.MeterProvider())
+	storageService, err := absto.New(abstoConfig, telemetryApp.TracerProvider())
+	logger.FatalfOnErr(ctx, err, "create storage")
+
+	netatmoApp, err := netatmo.New(netatmoConfig, storageService, telemetryApp.MeterProvider())
 	logger.FatalfOnErr(ctx, err, "create netatmo")
 
 	netatmoApp.Start(healthApp.DoneCtx())

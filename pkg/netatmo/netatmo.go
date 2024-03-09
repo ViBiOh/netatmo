@@ -10,26 +10,23 @@ import (
 	"syscall"
 	"time"
 
+	absto "github.com/ViBiOh/absto/pkg/model"
 	"github.com/ViBiOh/flags"
 	"github.com/ViBiOh/httputils/v4/pkg/cron"
 	"go.opentelemetry.io/otel/metric"
 )
 
 type Service struct {
+	storage      absto.Storage
+	token        Token
 	clientID     string
 	clientSecret string
-	accessToken  string
-	refreshToken string
 	scopes       string
-
-	devices []Device
-
-	mutex sync.RWMutex
+	devices      []Device
+	mutex        sync.RWMutex
 }
 
 type Config struct {
-	AccessToken  string
-	RefreshToken string
 	ClientID     string
 	ClientSecret string
 	Scopes       string
@@ -38,8 +35,6 @@ type Config struct {
 func Flags(fs *flag.FlagSet, prefix string) *Config {
 	var config Config
 
-	flags.New("AccessToken", "Access Token").Prefix(prefix).DocPrefix("netatmo").StringVar(fs, &config.AccessToken, "", nil)
-	flags.New("RefreshToken", "Refresh Token").Prefix(prefix).DocPrefix("netatmo").StringVar(fs, &config.RefreshToken, "", nil)
 	flags.New("ClientID", "Client ID").Prefix(prefix).DocPrefix("netatmo").StringVar(fs, &config.ClientID, "", nil)
 	flags.New("ClientSecret", "Client Secret").Prefix(prefix).DocPrefix("netatmo").StringVar(fs, &config.ClientSecret, "", nil)
 	flags.New("Scopes", "Scopes, comma separated").Prefix(prefix).DocPrefix("netatmo").StringVar(fs, &config.Scopes, "", nil)
@@ -47,13 +42,12 @@ func Flags(fs *flag.FlagSet, prefix string) *Config {
 	return &config
 }
 
-func New(config *Config, meterProvider metric.MeterProvider) (*Service, error) {
+func New(config *Config, storage absto.Storage, meterProvider metric.MeterProvider) (*Service, error) {
 	app := &Service{
 		clientID:     config.ClientID,
 		clientSecret: config.ClientSecret,
-		accessToken:  config.AccessToken,
-		refreshToken: config.RefreshToken,
 		scopes:       config.Scopes,
+		storage:      storage,
 	}
 
 	if err := app.createMetrics(meterProvider, "temperature", "humidity", "noise", "co2", "pressure"); err != nil {
@@ -64,9 +58,8 @@ func New(config *Config, meterProvider metric.MeterProvider) (*Service, error) {
 }
 
 func (s *Service) Start(ctx context.Context) {
-	if !s.Enabled() {
-		slog.WarnContext(ctx, "app is disabled")
-		return
+	if err := s.loadToken(ctx); err != nil {
+		slog.LogAttrs(ctx, slog.LevelError, "load token", slog.Any("error", err))
 	}
 
 	cron.New().Each(time.Minute*5).OnSignal(syscall.SIGUSR1).Now().OnError(func(ctx context.Context, err error) {
@@ -84,10 +77,6 @@ func (s *Service) Start(ctx context.Context) {
 
 		return nil
 	})
-}
-
-func (s *Service) Enabled() bool {
-	return s.accessToken != ""
 }
 
 func (s *Service) HasScope(scope string) bool {
