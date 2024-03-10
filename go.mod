@@ -1,4 +1,4 @@
-module github.com/ViBiOh/netatmo
+module github.com/ViBiOh/netatmo/v2
 
 go 1.22
 

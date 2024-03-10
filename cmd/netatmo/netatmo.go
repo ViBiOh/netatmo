@@ -17,7 +17,7 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
 	"github.com/ViBiOh/httputils/v4/pkg/request"
 	"github.com/ViBiOh/httputils/v4/pkg/telemetry"
-	"github.com/ViBiOh/netatmo/pkg/netatmo"
+	"github.com/ViBiOh/netatmo/v2/pkg/netatmo"
 )
 
 func main() {

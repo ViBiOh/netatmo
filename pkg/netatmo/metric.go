@@ -11,7 +11,7 @@ import (
 var sanitizeRegexp = regexp.MustCompile(`(?mi)(\S+).*`)
 
 func (s *Service) createMetrics(meterProvider metric.MeterProvider, names ...string) error {
-	meter := meterProvider.Meter("github.com/ViBiOh/netatmo/pkg/netatmo")
+	meter := meterProvider.Meter("github.com/ViBiOh/netatmo/v2/pkg/netatmo")
 
 	for _, name := range names {
 		if err := s.createMetric(meter, name); err != nil {
