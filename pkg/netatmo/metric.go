@@ -92,7 +92,7 @@ func (s *Service) createMetric(meter metric.Meter, name string) error {
 		return nil
 	}
 
-	_, err := meter.Float64ObservableGauge("netatmo_"+name, metric.WithFloat64Callback(callback))
+	_, err := meter.Float64ObservableGauge("netatmo."+name, metric.WithFloat64Callback(callback))
 
 	return err
 }
