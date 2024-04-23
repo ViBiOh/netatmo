@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
@@ -34,9 +33,7 @@ func main() {
 
 	cipherSecret := flags.New("CipherSecret", "Secret for ciphering token, 32 characters").DocPrefix("secret").String(fs, "", nil)
 
-	if err := fs.Parse(os.Args[1:]); err != nil {
-		log.Fatal(err)
-	}
+	_ = fs.Parse(os.Args[1:])
 
 	logger.Init(loggerConfig)
 
