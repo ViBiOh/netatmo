@@ -1,7 +1,6 @@
 # netatmo
 
 [![Build](https://github.com/ViBiOh/netatmo/workflows/Build/badge.svg)](https://github.com/ViBiOh/netatmo/actions)
-[![codecov](https://codecov.io/gh/ViBiOh/netatmo/branch/main/graph/badge.svg)](https://codecov.io/gh/ViBiOh/netatmo)
 
 ## Usage
 

@@ -38,7 +38,7 @@ func (s *Service) getData(ctx context.Context, url string) (StationsData, error)
 }
 
 func (s *Service) getDevices(ctx context.Context) ([]Device, error) {
-	devices := make([]Device, 0)
+	var devices []Device
 
 	if s.HasScope("read_station") {
 		stationsData, err := s.getData(ctx, netatmoGetStationsDataURL)
