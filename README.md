@@ -10,7 +10,7 @@ Be careful when using the CLI values, if someone list the processes on the syste
 
 ```bash
 Usage of netatmo:
-  --cipherSecret                string    [secret] Secret for ciphering token ${NETATMO_CIPHER_SECRET}
+  --cipherSecret                string    [secret] Secret for ciphering token, 32 characters ${NETATMO_CIPHER_SECRET}
   --clientID                    string    [netatmo] Client ID ${NETATMO_CLIENT_ID}
   --clientSecret                string    [netatmo] Client Secret ${NETATMO_CLIENT_SECRET}
   --graceDuration               duration  [http] Grace duration when signal received ${NETATMO_GRACE_DURATION} (default 30s)
@@ -20,8 +20,10 @@ Usage of netatmo:
   --loggerMessageKey            string    [logger] Key for message in JSON ${NETATMO_LOGGER_MESSAGE_KEY} (default "msg")
   --loggerTimeKey               string    [logger] Key for timestamp in JSON ${NETATMO_LOGGER_TIME_KEY} (default "time")
   --okStatus                    int       [http] Healthy HTTP Status code ${NETATMO_OK_STATUS} (default 204)
+  --pprofAgent                  string    [pprof] URL of the Datadog Trace Agent (e.g. http://datadog.observability:8126) ${NETATMO_PPROF_AGENT}
+  --pprofPort                   int       [pprof] Port of the HTTP server (0 to disable) ${NETATMO_PPROF_PORT} (default 0)
   --scopes                      string    [netatmo] Scopes, comma separated ${NETATMO_SCOPES}
-  --storageFileSystemDirectory  /data     [storage] Path to directory. Default is dynamic. /data on a server and Current Working Directory in a terminal. ${NETATMO_STORAGE_FILE_SYSTEM_DIRECTORY} (default /Users/macbook/code/netatmo)
+  --storageFileSystemDirectory  /data     [storage] Path to directory. Default is dynamic. /data on a server and Current Working Directory in a terminal. ${NETATMO_STORAGE_FILE_SYSTEM_DIRECTORY} (default ${HOME}/code/netatmo)
   --storageObjectAccessKey      string    [storage] Storage Object Access Key ${NETATMO_STORAGE_OBJECT_ACCESS_KEY}
   --storageObjectBucket         string    [storage] Storage Object Bucket ${NETATMO_STORAGE_OBJECT_BUCKET}
   --storageObjectClass          string    [storage] Storage Object Class ${NETATMO_STORAGE_OBJECT_CLASS}
@@ -33,4 +35,5 @@ Usage of netatmo:
   --telemetryRate               string    [telemetry] OpenTelemetry sample rate, 'always', 'never' or a float value ${NETATMO_TELEMETRY_RATE} (default "always")
   --telemetryURL                string    [telemetry] OpenTelemetry gRPC endpoint (e.g. otel-exporter:4317) ${NETATMO_TELEMETRY_URL}
   --telemetryUint64                       [telemetry] Change OpenTelemetry Trace ID format to an unsigned int 64 ${NETATMO_TELEMETRY_UINT64} (default true)
+
 ```

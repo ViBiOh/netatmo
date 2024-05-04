@@ -3,17 +3,14 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
-	"net/http"
 	"os"
-
-	_ "net/http/pprof"
 
 	"github.com/ViBiOh/absto/pkg/absto"
 	"github.com/ViBiOh/flags"
 	"github.com/ViBiOh/httputils/v4/pkg/e2e"
 	"github.com/ViBiOh/httputils/v4/pkg/health"
 	"github.com/ViBiOh/httputils/v4/pkg/logger"
+	"github.com/ViBiOh/httputils/v4/pkg/pprof"
 	"github.com/ViBiOh/httputils/v4/pkg/request"
 	"github.com/ViBiOh/httputils/v4/pkg/telemetry"
 	"github.com/ViBiOh/netatmo/v2/pkg/netatmo"
@@ -27,6 +24,7 @@ func main() {
 
 	loggerConfig := logger.Flags(fs, "logger")
 	telemetryConfig := telemetry.Flags(fs, "telemetry")
+	pprofConfig := pprof.Flags(fs, "pprof")
 
 	netatmoConfig := netatmo.Flags(fs, "")
 	abstoConfig := absto.Flags(fs, "storage")
@@ -39,9 +37,7 @@ func main() {
 
 	ctx := context.Background()
 
-	go func() {
-		fmt.Println(http.ListenAndServe("localhost:9999", http.DefaultServeMux))
-	}()
+	healthApp := health.New(ctx, healthConfig)
 
 	telemetryApp, err := telemetry.New(ctx, telemetryConfig)
 	logger.FatalfOnErr(ctx, err, "create telemetry")
@@ -51,7 +47,10 @@ func main() {
 	logger.AddOpenTelemetryToDefaultLogger(telemetryApp)
 	request.AddOpenTelemetryToDefaultClient(telemetryApp.MeterProvider(), telemetryApp.TracerProvider())
 
-	healthApp := health.New(ctx, healthConfig)
+	service, version, env := telemetryApp.GetServiceVersionAndEnv()
+	pprofService := pprof.New(pprofConfig, service, version, env)
+
+	go pprofService.Start(healthApp.DoneCtx())
 
 	e2eService := e2e.New(*cipherSecret)
 
