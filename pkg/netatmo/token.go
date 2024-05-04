@@ -31,6 +31,8 @@ func (s *Service) refreshAccessToken(ctx context.Context) error {
 		return fmt.Errorf("read: %w", err)
 	}
 
+	token = token.ComputeExpire()
+
 	if err := s.saveToken(ctx, token); err != nil {
 		return fmt.Errorf("save: %w", err)
 	}

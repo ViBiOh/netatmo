@@ -16,6 +16,12 @@ const (
 )
 
 func (s *Service) getData(ctx context.Context, url string) (StationsData, error) {
+	if s.token.IsExpired() {
+		if err := s.refreshAccessToken(ctx); err != nil {
+			return StationsData{}, fmt.Errorf("refresh: %w", err)
+		}
+	}
+
 	resp, err := request.Get(fmt.Sprintf("%s%s", url, s.token.AccessToken)).Send(ctx, nil)
 	if err != nil && resp != nil && resp.StatusCode == http.StatusForbidden {
 		if err := s.refreshAccessToken(ctx); err != nil {

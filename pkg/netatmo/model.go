@@ -1,9 +1,10 @@
 package netatmo
 
+import "time"
+
 const (
 	DevicesAction = "devices"
-
-	Source = "netatmo"
+	Source        = "netatmo"
 )
 
 type StationsData struct {
@@ -39,6 +40,18 @@ type Error struct {
 }
 
 type Token struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	ExpiresAt    time.Time `json:"expires_at"`
+	AccessToken  string    `json:"access_token"`
+	RefreshToken string    `json:"refresh_token"`
+	ExpiresIn    int64     `json:"expires_in"`
+}
+
+func (t Token) IsExpired() bool {
+	return t.ExpiresAt.Before(time.Now())
+}
+
+func (t Token) ComputeExpire() Token {
+	t.ExpiresAt = time.Now().Add(time.Second * time.Duration(t.ExpiresIn))
+
+	return t
 }
