@@ -33,9 +33,9 @@ func main() {
 
 	_ = fs.Parse(os.Args[1:])
 
-	logger.Init(loggerConfig)
-
 	ctx := context.Background()
+
+	logger.Init(ctx, loggerConfig)
 
 	healthApp := health.New(ctx, healthConfig)
 
