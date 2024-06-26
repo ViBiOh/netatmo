@@ -35,5 +35,4 @@ Usage of netatmo:
   --telemetryRate               string    [telemetry] OpenTelemetry sample rate, 'always', 'never' or a float value ${NETATMO_TELEMETRY_RATE} (default "always")
   --telemetryURL                string    [telemetry] OpenTelemetry gRPC endpoint (e.g. otel-exporter:4317) ${NETATMO_TELEMETRY_URL}
   --telemetryUint64                       [telemetry] Change OpenTelemetry Trace ID format to an unsigned int 64 ${NETATMO_TELEMETRY_UINT64} (default true)
-
 ```

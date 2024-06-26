@@ -8,7 +8,7 @@ endif
 APP_NAME = netatmo
 PACKAGES ?= ./...
 
-MAIN_SOURCE = cmd/netatmo/netatmo.go
+MAIN_SOURCE = ./cmd/netatmo/
 MAIN_RUNNER = go run $(MAIN_SOURCE)
 ifeq ($(DEBUG), true)
 	MAIN_RUNNER = dlv debug $(MAIN_SOURCE) --
