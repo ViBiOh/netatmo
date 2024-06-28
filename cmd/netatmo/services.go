@@ -13,16 +13,17 @@ type services struct {
 }
 
 func newServices(config configuration, clients clients, adapters adapters) (services, error) {
+	var output services
+	var err error
+
 	e2eService := e2e.New(*config.cipherSecret)
 
-	netatmoApp, err := netatmo.New(config.netatmo, adapters.storage, e2eService, clients.telemetry.MeterProvider())
+	output.netatmo, err = netatmo.New(config.netatmo, adapters.storage, e2eService, clients.telemetry.MeterProvider())
 	if err != nil {
-		return services{}, fmt.Errorf("netatmo: %w", err)
+		return output, fmt.Errorf("netatmo: %w", err)
 	}
 
-	return services{
-		netatmo: netatmoApp,
-	}, nil
+	return output, nil
 }
 
 func (s services) Start(ctx context.Context) {
