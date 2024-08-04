@@ -26,8 +26,8 @@ func (s *Service) refreshAccessToken(ctx context.Context) error {
 		return fmt.Errorf("post: %w", err)
 	}
 
-	var token Token
-	if err := httpjson.Read(resp, &token); err != nil {
+	token, err := httpjson.Read[Token](resp)
+	if err != nil {
 		return fmt.Errorf("read: %w", err)
 	}
 

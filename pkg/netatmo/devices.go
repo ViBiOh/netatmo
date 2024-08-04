@@ -35,8 +35,8 @@ func (s *Service) getData(ctx context.Context, url string) (StationsData, error)
 		return StationsData{}, fmt.Errorf("fetch: %w", err)
 	}
 
-	var infos StationsData
-	if err := httpjson.Read(resp, &infos); err != nil {
+	infos, err := httpjson.Read[StationsData](resp)
+	if err != nil {
 		return StationsData{}, fmt.Errorf("read: %w", err)
 	}
 
