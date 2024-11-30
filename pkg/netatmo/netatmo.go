@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 	"strings"
-	"sync"
 	"syscall"
 	"time"
 
@@ -19,13 +18,12 @@ import (
 
 type Service struct {
 	storage      absto.Storage
-	e2e          e2e.Service
-	token        Token
+	metrics      map[string]metric.Float64Gauge
 	clientID     string
 	clientSecret string
 	scopes       string
-	devices      []Device
-	mutex        sync.RWMutex
+	token        Token
+	e2e          e2e.Service
 }
 
 type Config struct {
@@ -53,9 +51,12 @@ func New(config *Config, storage absto.Storage, e2eService e2e.Service, meterPro
 		storage:      storage,
 	}
 
-	if err := app.createMetrics(meterProvider, "temperature", "humidity", "noise", "co2", "pressure"); err != nil {
+	metrics, err := createMetrics(meterProvider, "temperature", "humidity", "noise", "co2", "pressure")
+	if err != nil {
 		return nil, fmt.Errorf("create metrics: %w", err)
 	}
+
+	app.metrics = metrics
 
 	return app, nil
 }
@@ -73,10 +74,7 @@ func (s *Service) Start(ctx context.Context) {
 			return fmt.Errorf("fetch devices: %w", err)
 		}
 
-		s.mutex.Lock()
-		defer s.mutex.Unlock()
-
-		s.devices = devices
+		s.observeMetrics(ctx, devices)
 
 		return nil
 	})
