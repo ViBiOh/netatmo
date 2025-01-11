@@ -10,9 +10,10 @@ import (
 )
 
 const (
-	netatmoGetStationsDataURL   = "https://api.netatmo.com/api/getstationsdata?access_token="
-	netatmoGetHomeCoachsDataURL = "https://api.netatmo.com/api/gethomecoachsdata?access_token="
-	netatmoRefreshTokenURL      = "https://api.netatmo.com/oauth2/token"
+	netatmoEndpoint             = "https://api.netatmo.com/"
+	netatmoGetStationsDataURL   = netatmoEndpoint + "/api/getstationsdata"
+	netatmoGetHomeCoachsDataURL = netatmoEndpoint + "/api/gethomecoachsdata"
+	netatmoRefreshTokenURL      = netatmoEndpoint + "/oauth2/token"
 )
 
 func (s *Service) getData(ctx context.Context, url string) (StationsData, error) {
@@ -22,13 +23,13 @@ func (s *Service) getData(ctx context.Context, url string) (StationsData, error)
 		}
 	}
 
-	resp, err := request.Get(fmt.Sprintf("%s%s", url, s.token.AccessToken)).Send(ctx, nil)
+	resp, err := request.New().Header("Authorization", "Bearer "+s.token.AccessToken).Get(url).Send(ctx, nil)
 	if err != nil && resp != nil && resp.StatusCode == http.StatusForbidden {
 		if err := s.refreshAccessToken(ctx); err != nil {
 			return StationsData{}, fmt.Errorf("refresh: %w", err)
 		}
 
-		resp, err = request.Get(fmt.Sprintf("%s%s", url, s.token.AccessToken)).Send(ctx, nil)
+		resp, err = request.New().Header("Authorization", "Bearer "+s.token.AccessToken).Get(url).Send(ctx, nil)
 	}
 
 	if err != nil {
