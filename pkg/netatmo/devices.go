@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	netatmoEndpoint             = "https://api.netatmo.com/"
+	netatmoEndpoint             = "https://api.netatmo.com"
 	netatmoGetStationsDataURL   = netatmoEndpoint + "/api/getstationsdata"
 	netatmoGetHomeCoachsDataURL = netatmoEndpoint + "/api/gethomecoachsdata"
 	netatmoRefreshTokenURL      = netatmoEndpoint + "/oauth2/token"
