@@ -14,11 +14,13 @@ import (
 	"github.com/ViBiOh/httputils/v4/pkg/cron"
 	"github.com/ViBiOh/httputils/v4/pkg/e2e"
 	"go.opentelemetry.io/otel/metric"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Service struct {
 	storage      absto.Storage
 	metrics      map[string]metric.Float64Gauge
+	cron         *cron.Cron
 	clientID     string
 	clientSecret string
 	scopes       string
@@ -42,13 +44,14 @@ func Flags(fs *flag.FlagSet, prefix string) *Config {
 	return &config
 }
 
-func New(config *Config, storage absto.Storage, e2eService e2e.Service, meterProvider metric.MeterProvider) (*Service, error) {
+func New(config *Config, storage absto.Storage, e2eService e2e.Service, tracerProvider trace.TracerProvider, meterProvider metric.MeterProvider) (*Service, error) {
 	app := &Service{
 		clientID:     config.ClientID,
 		clientSecret: config.ClientSecret,
 		scopes:       config.Scopes,
 		e2e:          e2eService,
 		storage:      storage,
+		cron:         cron.New().WithTracerProvider(tracerProvider),
 	}
 
 	metrics, err := createMetrics(meterProvider, "temperature", "humidity", "noise", "co2", "pressure")
@@ -66,7 +69,7 @@ func (s *Service) Start(ctx context.Context) {
 		slog.LogAttrs(ctx, slog.LevelError, "load token", slog.Any("error", err))
 	}
 
-	cron.New().Each(time.Minute*5).OnSignal(syscall.SIGUSR1).Now().OnError(func(ctx context.Context, err error) {
+	s.cron.Each(time.Minute*5).OnSignal(syscall.SIGUSR1).Now().OnError(func(ctx context.Context, err error) {
 		slog.LogAttrs(ctx, slog.LevelError, "refresh cron", slog.Any("error", err))
 	}).Start(ctx, func(ctx context.Context) error {
 		devices, err := s.getDevices(ctx)

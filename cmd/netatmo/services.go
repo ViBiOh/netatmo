@@ -18,7 +18,7 @@ func newServices(config configuration, clients clients, adapters adapters) (serv
 
 	e2eService := e2e.New(*config.cipherSecret)
 
-	output.netatmo, err = netatmo.New(config.netatmo, adapters.storage, e2eService, clients.telemetry.MeterProvider())
+	output.netatmo, err = netatmo.New(config.netatmo, adapters.storage, e2eService, clients.telemetry.TracerProvider(), clients.telemetry.MeterProvider())
 	if err != nil {
 		return output, fmt.Errorf("netatmo: %w", err)
 	}
