@@ -1,4 +1,4 @@
-FROM vibioh/scratch
+FROM rg.fr-par.scw.cloud/vibioh/scratch
 
 ENV ZONEINFO /zoneinfo.zip
 COPY zoneinfo.zip /zoneinfo.zip
