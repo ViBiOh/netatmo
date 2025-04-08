@@ -23,7 +23,7 @@ Usage of netatmo:
   --pprofAgent                  string    [pprof] URL of the Datadog Trace Agent (e.g. http://datadog.observability:8126) ${NETATMO_PPROF_AGENT}
   --pprofPort                   int       [pprof] Port of the HTTP server (0 to disable) ${NETATMO_PPROF_PORT} (default 0)
   --scopes                      string    [netatmo] Scopes, comma separated ${NETATMO_SCOPES}
-  --storageFileSystemDirectory  /data     [storage] Path to directory. Default is dynamic. /data on a server and Current Working Directory in a terminal. ${NETATMO_STORAGE_FILE_SYSTEM_DIRECTORY} (default ${HOME}/code/netatmo)
+  --storageFileSystemDirectory  /data     [storage] Path to directory. Default is dynamic. /data on a server and Current Working Directory in a terminal. ${NETATMO_STORAGE_FILE_SYSTEM_DIRECTORY} (default ${PWD})
   --storageObjectAccessKey      string    [storage] Storage Object Access Key ${NETATMO_STORAGE_OBJECT_ACCESS_KEY}
   --storageObjectBucket         string    [storage] Storage Object Bucket ${NETATMO_STORAGE_OBJECT_BUCKET}
   --storageObjectClass          string    [storage] Storage Object Class ${NETATMO_STORAGE_OBJECT_CLASS}
