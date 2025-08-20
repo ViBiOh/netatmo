@@ -31,10 +31,6 @@ spec:
       tags.datadoghq.com/service: "netatmo"
       tags.datadoghq.com/version: "202508132259" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
     env:
-      - name: GOMAXPROCS
-        valueFrom:
-          resourceFieldRef:
-            resource: limits.cpu
       - name: GOMEMLIMIT
         valueFrom:
           resourceFieldRef:
