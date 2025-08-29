@@ -25,11 +25,11 @@ spec:
     nameOverride: netatmo
     image:
       name: rg.fr-par.scw.cloud/vibioh/netatmo
-      tag: "202508202328" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
+      tag: "202508292312" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
     labels:
       tags.datadoghq.com/env: "production"
       tags.datadoghq.com/service: "netatmo"
-      tags.datadoghq.com/version: "202508202328" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
+      tags.datadoghq.com/version: "202508292312" # {"$imagepolicy": "default:flux-netatmo-api:tag"}
     env:
       - name: GOMEMLIMIT
         valueFrom:
